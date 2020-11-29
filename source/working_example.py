@@ -9,5 +9,10 @@ print(result)
 for i in list(result):
     print(i)
 
+#query = ''' #пример создания пользователя
+#CREATE USER if not exists test with password 'test'  # скл код этого дела
+#''' #
+#result = conn.execute(query) # ну тут и так понятно
+
 conn.execute("commit") # заканчиваем открытую транзакцию
 result = conn.execute("create database heh") # теперь можно создать базу данных

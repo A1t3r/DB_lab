@@ -3,7 +3,7 @@ class user:
         self.name=name
         self.password=password
 
-    def get_user_inforamation(self):
+    def get_user_information(self):
         return self.name + " " + self.password
 
 class Database:
