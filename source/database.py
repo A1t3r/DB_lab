@@ -1,15 +1,24 @@
-class user:
+from sqlalchemy import create_engine
+import queries as q
+
+
+class User:
     def __init__(self, name, password):
         self.name = name
         self.password = password
 
     def get_user_information(self):
-        return self.name + " " + self.password
+        return self.name + ":" + self.password
 
 
 class Database:
-    def __init__(self, url):
-        pass
+    _engine = None
+    _connect = None
+
+    def __init__(self, url):  # стартовая инициализация
+        self._engine = create_engine(url)
+        self._connect = self._engine.connect()
+        return
 
     def create_database(self):  # создание бд
         pass
@@ -17,7 +26,7 @@ class Database:
     def delete_database(self):  # удаление бд
         pass
 
-    def create_tables(self):  # создание таблицы
+    def create_tables(self):  # создание таблиц
         pass
 
     def get_table(self, name):  # вывод содержимого таблицы
@@ -37,13 +46,14 @@ class Database:
     def insert_into(self, table_name, values):  # добавление данных
         pass
 
-    def search_by_group(self, group_name):# Поиск по заранее выбранному(вами) текстовому не ключевому полю
+    def search_by_group(self, group_name):  # Поиск по заранее выбранному(вами) текстовому не ключевому полю
         pass  # мы вроде решили, что ищем по названию группы
 
-    def update_table(self, table):# Обновление кортежа
+    def update_table(self, table):  # Обновление кортежа
         pass
 
-    def delete_by_group(self, group_name):# Удаление по заранее выбранному текстовому не ключевому полю
+    def delete_by_group(self, group_name):  # Удаление по заранее выбранному текстовому не ключевому полю
         pass
-    def single_delete(self, record_id):# Удаление конкретной записи, выбранной пользователем
+
+    def single_delete(self, record_id):  # Удаление конкретной записи, выбранной пользователем
         pass
