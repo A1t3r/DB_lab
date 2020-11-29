@@ -1,3 +1,11 @@
+class user:
+    def __init__(self, name,  password):
+        self.name=name
+        self.password=password
+
+    def get_user_inforamation(self):
+        return self.name + " " + self.password
+
 class Database:
     def __init__(self, url):
         pass
