@@ -5,8 +5,8 @@ create table Student
 (
 	id serial primary key,
 	groupID integer,
-	name varchar(10),
-	surname varchar(15),
+	name varchar(15),
+	surname varchar(20),
 	classes_number integer,
 	foreign key (groupID) references Group (id)
 );
@@ -16,7 +16,7 @@ create_table_group_query = """
 create table Group
 (
 	id serial primary key,
-	name string
+	name text check (name is not null)
 );
 """
 
@@ -28,7 +28,7 @@ create table Schedule
 	time time,
 	courseID integer,
 	audience varchar(4),
-	lecturer varchar(20)
+	lecturer text
 	constraint couple primary key(group, weekday, time),
 	foreign key (courseID) references Course (id)
 );
@@ -38,7 +38,7 @@ create_table_course_query = """
 create table Course
 (
 	id serial primary key,
-	name varchar(40)
+	name text
 );
 """
 
