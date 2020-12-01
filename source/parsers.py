@@ -21,3 +21,9 @@ def init_insert_parser(file):  # парсеры написаны исходя и
         tmp = data.split('\n')
         output = tmp
     return output
+
+def personal_info_parser(file):
+    f = open(file, 'r')
+    data = f.read()
+    tmp = data.split('\n')
+    return tmp
