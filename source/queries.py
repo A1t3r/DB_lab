@@ -43,6 +43,48 @@ create table Course
 """
 
 
+def insert_into_student(values, id):
+    query = "insert into Student (id, groupID, name, surname) values"
+    buf = ''
+    for item in values:
+        query += (buf + " (" + str(id) + ", " + item[0] + ", " + item[1] +
+                  ", " + item[2] + ")")
+        buf = ','
+        id += 1
+    return query
+
+
+def insert_into_group(values, id):
+    query = "insert into Group (id, name) values"
+    buf = ''
+    for item in values:
+        query += buf + " (" + str(id) + ", " + item[0] + ")"
+        buf = ','
+        id += 1
+    return query
+
+
+def insert_into_schedule(values):
+    query = "insert into Student (groupID, weekday, time, courseID, audience, lecturer) values"
+    buf = ''
+    for item in values:
+        query += (buf + " (" + item[0] + ", " + item[1] + ", " + item[2] +
+                  ", " + item[3] + ", " + item[4] + ", " + item[5] +")")
+        buf = ','
+        id += 1
+    return query
+
+
+def insert_into_course(values, id):
+    query = "insert into Course (id, name) values"
+    buf = ''
+    for item in values:
+        query += (buf + " (" + str(id) + ", " + item[0] + ")")
+        buf = ','
+        id += 1
+    return query
+
+
 def select_all_from(table_name):
     if table_name in table_names:
         return "select * from {}".format(table_name)

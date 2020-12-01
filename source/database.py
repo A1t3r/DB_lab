@@ -1,13 +1,18 @@
 from sqlalchemy import create_engine
 import queries as q
 
+
 class Database:
     _engine = None
     _connect = None
+    _current_student_id = 1
+    _current_group_id = 1
+    _current_course_id = 1
 
     def __init__(self, url):  # стартовая инициализация
         self._engine = create_engine(url)
         self._connect = self._engine.connect()
+        # can we use engine.execute() instead?
         return
 
     def create_database(self):  # создание бд
