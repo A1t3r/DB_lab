@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-import queries as q
+#import queries as q
 
 
 class Database:
