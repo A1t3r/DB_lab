@@ -64,12 +64,12 @@ def insert_into_group(values, id):
     return query
 
 
-def insert_into_schedule(values):
+def insert_into_schedule(values, empty=None):
     query = "insert into Student (groupID, weekday, time, courseID, audience, lecturer) values"
     buf = ''
     for item in values:
         query += (buf + " (" + item[0] + ", " + item[1] + ", " + item[2] +
-                  ", " + item[3] + ", " + item[4] + ", " + item[5] +")")
+                  ", " + item[3] + ", " + item[4] + ", " + item[5] + ")")
         buf = ','
         id += 1
     return query
@@ -89,11 +89,19 @@ def select_all_from(table_name):
     if table_name in table_names:
         return "select * from {}".format(table_name)
     else:
-        raise ValueError("There is no table with name '{}'".format(table_name))
+        raise ValueError("Can't select from non-existent table '{}'".format(table_name))
 
 
 def delete_all_from(table_name):
     if table_name in table_names:
         return "delete from {}".format(table_name)
     else:
-        raise ValueError("There is no table with name '{}'".format(table_name))
+        raise ValueError("Can't clear non-existent table '{}'".format(table_name))
+
+
+insert_dict = {
+    'Student': insert_into_student,
+    'Group': insert_into_group,
+    'Schedule': insert_into_schedule,
+    'Course': insert_into_course
+}

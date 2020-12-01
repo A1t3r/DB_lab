@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 from sqlalchemy_utils import create_database
 
 # создаем связь
@@ -18,3 +18,8 @@ conn.execute("commit")  # заканчиваем открытую транзак
 # result = conn.execute("create database heh") # теперь можно создать базу данных
 
 # conn.execute("create table custs (id serial primary key, surname varchar(15));")
+
+metadata = MetaData()
+
+metadata.reflect(engine)
+print(metadata.tables.keys())
