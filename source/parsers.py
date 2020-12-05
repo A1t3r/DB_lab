@@ -15,16 +15,11 @@ def init_insert_parser(file):  # парсеры написаны исходя и
                     output.append((id, tmp[0], tmp[1]))
                 else:
                     id += 1
-    elif file == 'data/Schedule.txt':
-        for line in text:
+    elif file == 'data/Schedule.txt':  # Верну кортеж вида
+        for line in text:  # (id группы|День недели|Номер пары|Тип занятия|Аудитоия|Преподаватель)
             if len(line):
-                tmp = line.split(' ')
-                t1 = tuple(tuple(tmp[:-4]))  # сейчас будут махинации, чтобы последние строчки идентифицировать как одну
-                tmpstr = ' '
-                tmpstr = tmpstr.join(tmp[-4:])  # это последние 4
-                tmp = tmp[:-4]
-                tmp.append(tmpstr)  # сделали объединение в один лист и конвертим в кортеж
-                output.append(tuple(tmp))
+                tmp = tuple(line.split(','))
+                output.append(tmp)
     else:
         output = text
     return output
