@@ -8,15 +8,15 @@ create table Student
 	name varchar(15),
 	surname varchar(20),
 	classes_number integer,
-	foreign key (groupID) references Group (id)
+	foreign key (groupID) references Groups (id)
 );
 """
 
 create_table_group_query = """
-create table Group
+create table Groups
 (
 	id serial primary key,
-	name text check (name is not null)
+	name varchar(30) check (name is not null)
 );
 """
 
@@ -24,21 +24,21 @@ create_table_schedule_query = """
 create table Schedule
 (
 	groupID integer,
-	weekday string,
-	time time,
+	weekday varchar(10),
+	daytime integer check (daytime >= 0 and daytime <= 8),
 	courseID integer,
 	audience varchar(4),
-	lecturer text
-	constraint couple primary key(group, weekday, time),
+	lecturer text,
+	constraint couple primary key (groupID, weekday, daytime),
 	foreign key (courseID) references Course (id)
 );
-"""  # !!!!!!!!!!!!!!!!!!!!!! тип поля time: time / numeric
+"""
 
 create_table_course_query = """
 create table Course
 (
 	id serial primary key,
-	name text
+	name varchar(20)
 );
 """
 
