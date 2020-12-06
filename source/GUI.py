@@ -12,10 +12,13 @@
 
 from database import Database
 
-URL = 'postgresql+psycopg2://postgres:123@localhost/postgres'
 
+password = ''  # enter your password here
+name_db = 'kekv'
+username = 'postgres'
 
-db = Database(URL)
-db.create_database("hello_db")
-c = input("Press anything to drop base")
+db = Database('postgres', username, password)
+db.create_database(name_db, username, password)
+# db.connect(name_db, username, password)
+# c = input("Press enter to drop base")
 db.delete_database()

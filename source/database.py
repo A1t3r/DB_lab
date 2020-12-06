@@ -1,12 +1,15 @@
 from sqlalchemy import create_engine, MetaData
+import psycopg2
 import queries as q
 
 
 class Database:
-    _engine = None
+    _parent_connect = None
     _connect = None
     _metadata = None
     _name = None
+    _engine = None
+    _conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
     _id_dict = {
         'Student': 1,
         'Group': 1,
@@ -28,28 +31,59 @@ class Database:
         self._create_delete_()
         self._create_select_all_()
 
-    def __init__(self, url):  # стартовая инициализация
-        self._engine = create_engine(url)
-        self._connect = self._engine.connect()
-        self._connect.execute("commit")
+    def __init__(self, dbname, username, password, host='localhost'):  # стартовая инициализация
+        engine = create_engine('postgresql+psycopg2://{}:{}@{}/{}'.format(username, password, host, dbname))
+        self._parent_connect = engine.connect()
+        self._parent_connect.execute("commit")
         self._metadata = MetaData()
         return
 
-    def create_database(self, database_name):  # создание бд
+    def create_database(self, database_name, username, password, host='localhost'):  # создание бд
         if self._name == None:
-            self._connect.execute("create database {}".format(database_name))
-            self._connect.execute("commit")
+            self._parent_connect.execute("create database {}".format(database_name))
+            self._parent_connect.execute("commit")
             self._name = database_name
+
+            engine = create_engine('postgresql+psycopg2://{}:{}@{}/{}'.format(username, password, host, database_name))
+            self._engine = engine
+            self._connect = engine.connect()
+            self._connect.execute("commit")
 
             self._create_tables()
         else:
             raise ValueError("'{}' already exists".format(database_name))
         return
 
+    def connect(self, database_name, username, password, host='localhost'):
+        if self._name == None:
+
+            engine = create_engine('postgresql+psycopg2://{}:{}@{}/{}'.format(username, password, host, database_name))
+            self._engine = engine
+            self._connect = engine.connect()
+            self._connect.execute("commit")
+
+            self._name = database_name
+        else:
+            raise ValueError("Already connected to '{}'".format(self._name))
+        return
+
     def delete_database(self):  # удаление бд
-        self._connect.execute("DROP DATABASE {};".format(self._name))
-        self._connect.execute("commit")
-        self._name = None
+        if self._name != None:
+            self._engine.dispose()
+            self._connect.close()
+            self._connect = None
+            self._engine = None
+            c = input("Press enter to drop base")
+            self._parent_connect.execute("DROP DATABASE {};".format(self._name))
+            self._parent_connect.execute("commit")
+            self._name = None
+        else:
+            raise ValueError("Database does not exist")
+        return
+
+    def __del__(self):
+        if self._connect != None: self._connect.close()
+        if self._parent_connect != None: self._parent_connect.close()
         return
 
     def _create_tables(self):  # создание таблиц

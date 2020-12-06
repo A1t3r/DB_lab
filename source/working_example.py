@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy_utils import create_database
 
 # создаем связь
-engine = create_engine('postgresql+psycopg2://postgres:123@localhost/postgres')
+engine = create_engine('postgresql+psycopg2://postgres:password@localhost/postgres')
 conn = engine.connect()  # создаем транзакцию
 result = conn.execute("select * from aircrafts")
 print(result)
@@ -21,5 +21,14 @@ conn.execute("commit")  # заканчиваем открытую транзак
 
 metadata = MetaData()
 
-metadata.reflect(engine)
-print(metadata.tables.keys())
+# metadata.reflect(engine)
+# print(metadata.tables.keys())
+
+conn.execute("""
+create table Course
+(
+	id serial primary key,
+	name varchar(20)
+);
+""")
+conn.execute("commit")
