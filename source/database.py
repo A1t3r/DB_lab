@@ -1,6 +1,9 @@
 from sqlalchemy import create_engine, MetaData
 import psycopg2
 import queries as q
+import parsers as pr
+
+tables = ('Groups', 'Students', 'Courses', 'Schedule')
 
 
 class Database:
@@ -17,8 +20,27 @@ class Database:
         'Course': 1
     }
 
-    def _create_insert_(self):
-        pass
+    def __init__(self, dbname, username, password, host='localhost'):  # стартовая инициализация
+        engine = create_engine('postgresql+psycopg2://{}:{}@{}'.format(username, password, host))
+        self._parent_connect = engine.connect()
+        self._metadata = MetaData()
+        self._parent_connect.execute("commit")
+        #self.create_database(dbname, username, password)
+        # self._create_tables()
+        # self._create_procedures()  # create init postgres procedures
+        # for table in tables:
+        #    self.insert_into(table, pr.init_insert_parser("data/" + table + ".txt"))
+        # self._parent_connect.execute("commit")
+        return
+
+    def __fill_tables(self):
+        for table in tables:
+            self.insert_into(table, pr.init_insert_parser("data/" + table + ".txt"))
+
+    def _create_insert_(self, inserts):
+        for sql in inserts:
+            self._connect.execute(sql)
+            self._connect.execute("commit")
 
     def _create_delete_(self):
         pass
@@ -27,16 +49,9 @@ class Database:
         pass
 
     def _create_procedures(self):
-        self._create_insert_()
+        self._create_insert_(q.total_insert)
         self._create_delete_()
         self._create_select_all_()
-
-    def __init__(self, dbname, username, password, host='localhost'):  # стартовая инициализация
-        engine = create_engine('postgresql+psycopg2://{}:{}@{}/{}'.format(username, password, host, dbname))
-        self._parent_connect = engine.connect()
-        self._parent_connect.execute("commit")
-        self._metadata = MetaData()
-        return
 
     def create_database(self, database_name, username, password, host='localhost'):  # создание бд
         if self._name == None:
@@ -50,6 +65,8 @@ class Database:
             self._connect.execute("commit")
 
             self._create_tables()
+            self._create_procedures()
+            self.__fill_tables()
         else:
             raise ValueError("'{}' already exists".format(database_name))
         return
@@ -87,10 +104,10 @@ class Database:
         return
 
     def _create_tables(self):  # создание таблиц
-        self._connect.execute(q.create_table_course_query)
+        self._connect.execute(q.create_table_courses_query)
         self._connect.execute(q.create_table_schedule_query)
-        self._connect.execute(q.create_table_group_query)
-        self._connect.execute(q.create_table_student_query)
+        self._connect.execute(q.create_table_groups_query)
+        self._connect.execute(q.create_table_students_query)
         self._connect.execute("commit")
         return
 
@@ -117,6 +134,19 @@ class Database:
     # а полная значит очистить все таблицы
 
     def insert_into(self, table_name, values):  # добавление данных
+        for item in values:
+            qu = str("select insert_{}(".format(table_name))
+            for val in item:
+                if type(val) != str:
+                    qu += str(val) + ','
+                else:
+                    qu += "'" + val + "'" + ','
+            qu = qu[:-1] + ')'
+            self._connect.execute(qu)
+            self._connect.execute('commit')
+
+
+    def insert_into1(self, table_name, values):  # добавление данных
         self._metadata.reflect(self._engine)
         if table_name in self._metadata.tables.keys() and table_name in q.table_names:
             length = len(values)
@@ -124,7 +154,7 @@ class Database:
             self._id_dict[table_name] += length
             return query
         else:
-            raise ValueError("Can't insrest into non-exist table {}".format(table_name))
+            raise ValueError("Can't insert into non-exist table {}".format(table_name))
 
     def search_by_group(self, group_name):  # Поиск по заранее выбранному(вами) текстовому не ключевому полю
         pass  # мы вроде решили, что ищем по названию группы

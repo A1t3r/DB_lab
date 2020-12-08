@@ -1,10 +1,11 @@
+import database as db
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy_utils import create_database
 
 # создаем связь
-engine = create_engine('postgresql+psycopg2://postgres:password@localhost/postgres')
+engine = create_engine('postgresql+psycopg2://postgres:password@localhost/lab1')
 conn = engine.connect()  # создаем транзакцию
-result = conn.execute("select * from aircrafts")
+result = conn.execute("select * from ПРОКАТ")
 print(result)
 for i in list(result):
     print(i)
@@ -25,10 +26,14 @@ metadata = MetaData()
 # print(metadata.tables.keys())
 
 conn.execute("""
-create table Course
+create table if not exists Course
 (
 	id serial primary key,
 	name varchar(20)
 );
 """)
 conn.execute("commit")
+
+
+# insert password
+#db=db.Database('heh', 'postgres', password)
