@@ -124,7 +124,7 @@ class Database:
             self._id_dict[table_name] += length
             return query
         else:
-            raise ValueError("Can't delete from non-exist table {}".format(table_name))
+            raise ValueError("Can't insrest into non-exist table {}".format(table_name))
 
     def search_by_group(self, group_name):  # Поиск по заранее выбранному(вами) текстовому не ключевому полю
         pass  # мы вроде решили, что ищем по названию группы

@@ -27,7 +27,7 @@ create table Schedule
 	weekday varchar(10),
 	daytime integer check (daytime >= 0 and daytime <= 8),
 	courseID integer,
-	audience varchar(4),
+	audience varchar(5),
 	lecturer text,
 	constraint couple primary key (groupID, weekday, daytime),
 	foreign key (courseID) references Course (id)

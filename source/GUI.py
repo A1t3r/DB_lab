@@ -5,6 +5,17 @@ from database import Database
 import variables as v
 
 
+def show_data(data=[], data_maxlength=[]):
+    length = len(data_maxlength)
+    for row in data:
+        format_string = ""
+        for i in range(len(row)):
+            buf = str(row[i])
+            format_string += buf + " " * (data_maxlength[i] - len(buf)) + "|"
+        main_lbox.insert(END, format_string)
+    return
+
+
 def create_database():
     pass
 
@@ -107,7 +118,7 @@ pack_menu()
 database = None
 
 # show panel
-main_lbox = Listbox(width=v.width_listbox, height=v.height_listbox)
+main_lbox = Listbox(width=v.width_listbox, height=v.height_listbox, font=("Courier", 9))
 main_lbox.pack(side=LEFT)
 
 # tools panel
@@ -119,5 +130,9 @@ tool_frame.pack(side=TOP)
 
 show_tables_tool()
 
+### test block
+show_data([['Username', 'years', 'job'], ['vadim', 3, 'waiter'], ['peter', 18, 'jobfree']], [30, 5, 10])
+
+#####
 
 root.mainloop()
