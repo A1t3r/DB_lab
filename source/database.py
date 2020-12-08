@@ -35,7 +35,9 @@ class Database:
 
     def __fill_tables(self):
         for table in tables:
-            self.insert_into(table, pr.init_insert_parser("data/" + table + ".txt"))
+            tmp=pr.init_insert_parser("data/" + table + ".txt")
+            for record in tmp:
+                self.insert_into(table, record)
 
     def _create_insert_(self, inserts):
         for sql in inserts:
@@ -134,16 +136,15 @@ class Database:
     # а полная значит очистить все таблицы
 
     def insert_into(self, table_name, values):  # добавление данных
+        qu = str("select insert_{}(".format(table_name))
         for item in values:
-            qu = str("select insert_{}(".format(table_name))
-            for val in item:
-                if type(val) != str:
-                    qu += str(val) + ','
-                else:
-                    qu += "'" + val + "'" + ','
-            qu = qu[:-1] + ')'
-            self._connect.execute(qu)
-            self._connect.execute('commit')
+            if type(item) != str:
+                qu += str(item) + ','
+            else:
+                qu += "'" + item + "'" + ','
+        qu = qu[:-1] + ')'
+        self._connect.execute(qu)
+        self._connect.execute('commit')
 
 
     def insert_into1(self, table_name, values):  # добавление данных
