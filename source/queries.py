@@ -1,5 +1,5 @@
 table_names = frozenset(('Student', 'Group', 'Schedule', 'Course'))
-
+###### TABLE CREATION QUERIES
 create_table_students_query = """
 create table Students
 (
@@ -42,6 +42,53 @@ create table Courses
 	name text
 );
 """
+######################
+
+######## INIT SELECT SQL ----- NOT TESTED!!!
+
+select_groups = '''
+CREATE OR REPLACE
+        FUNCTION select_Groups()
+        RETURNS table AS $$
+        BEGIN
+		select * from Groups
+        END;
+        $$ LANGUAGE plpgsql;
+'''
+
+select_students = '''
+CREATE OR REPLACE
+        FUNCTION insert_Students()
+        RETURNS table AS $$
+        BEGIN
+		select * from students
+        END;
+        $$ LANGUAGE plpgsql;
+'''
+
+select_courses = '''
+CREATE OR REPLACE
+        FUNCTION select_Courses()
+        RETURNS table AS $$
+        BEGIN
+		select * from courses
+        END;
+        $$ LANGUAGE plpgsql;
+'''
+
+select_schedule = '''
+CREATE OR REPLACE
+        FUNCTION insert_Schedule()
+        RETURNS table AS $$
+        BEGIN
+		select * from Schedule
+        END;
+        $$ LANGUAGE plpgsql;
+'''
+
+
+#######################
+
 
 ####### INIT INSERT SQL
 

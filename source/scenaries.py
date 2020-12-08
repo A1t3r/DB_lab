@@ -24,8 +24,10 @@ if scenario_num == 1:
     db.delete_database()  # пока не работает!!!
 
 if scenario_num == 2:
-    db.connect(name_db, username, password)
-    c = input("Press enter to drop base")
+    db = Database(name_db, username, password)
+    db.create_database(name_db, username, password)
+   # db.connect(name_db, username, password)
+  #  c = input("Press enter to drop base")
     db.delete_database()  # пока не работает!!!
 
 if scenario_num == 3:
@@ -35,3 +37,4 @@ if scenario_num == 3:
 if scenario_num == 4:
     db = Database(name_db, username, password)
     db.create_database(name_db, username, password)
+    db.delete_database()

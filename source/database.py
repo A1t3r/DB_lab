@@ -25,7 +25,7 @@ class Database:
         self._parent_connect = engine.connect()
         self._metadata = MetaData()
         self._parent_connect.execute("commit")
-        #self.create_database(dbname, username, password)
+        # self.create_database(dbname, username, password)
         # self._create_tables()
         # self._create_procedures()  # create init postgres procedures
         # for table in tables:
@@ -35,7 +35,7 @@ class Database:
 
     def __fill_tables(self):
         for table in tables:
-            tmp=pr.init_insert_parser("data/" + table + ".txt")
+            tmp = pr.init_insert_parser("data/" + table + ".txt")
             for record in tmp:
                 self.insert_into(table, record)
 
@@ -88,8 +88,8 @@ class Database:
 
     def delete_database(self):  # удаление бд
         if self._name != None:
-            self._engine.dispose()
             self._connect.close()
+            self._engine.dispose()
             self._connect = None
             self._engine = None
             c = input("Press enter to drop base")
@@ -103,6 +103,7 @@ class Database:
     def __del__(self):
         if self._connect != None: self._connect.close()
         if self._parent_connect != None: self._parent_connect.close()
+        if self._engine != None: self._connect.close()
         return
 
     def _create_tables(self):  # создание таблиц
@@ -136,26 +137,13 @@ class Database:
     # а полная значит очистить все таблицы
 
     def insert_into(self, table_name, values):  # добавление данных
-        qu = str("select insert_{}(".format(table_name))
-        for item in values:
-            if type(item) != str:
-                qu += str(item) + ','
-            else:
-                qu += "'" + item + "'" + ','
-        qu = qu[:-1] + ')'
-        self._connect.execute(qu)
-        self._connect.execute('commit')
-
-
-    def insert_into1(self, table_name, values):  # добавление данных
-        self._metadata.reflect(self._engine)
-        if table_name in self._metadata.tables.keys() and table_name in q.table_names:
-            length = len(values)
-            query = q.insert_dict[table_name](values, self._id_dict[table_name])
-            self._id_dict[table_name] += length
-            return query
-        else:
-            raise ValueError("Can't insert into non-exist table {}".format(table_name))
+        connection = self._engine.raw_connection()
+        cursor = connection.cursor()
+        cursor.callproc("insert_{}".format(table_name), values)
+        results = list(cursor.fetchall())
+        cursor.close()
+        connection.commit()
+        connection.close()
 
     def search_by_group(self, group_name):  # Поиск по заранее выбранному(вами) текстовому не ключевому полю
         pass  # мы вроде решили, что ищем по названию группы
