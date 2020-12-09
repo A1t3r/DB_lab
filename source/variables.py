@@ -10,14 +10,14 @@ height_listbox = 20
 width_tools = 25
 
 # database
-base_bd_name = 'postgres'
-bd_name = 'kekv'
+db_base_name = 'postgres'
+db_name = 'schedule'
 db_username = 'postgres'
 db_password = '123'
-host = 'localhost'
+db_host = 'localhost'
 
 # create database
 cd_label_width = 15
 cd_entry_width = 20
-cd_names = ['Base db', 'Username', 'Password', 'Host']
+cd_names = ['Database name', 'Username', 'Password', 'Host']
 cd_pad = 10

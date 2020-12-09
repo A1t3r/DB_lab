@@ -92,7 +92,6 @@ class Database:
             self._engine.dispose()
             self._connect = None
             self._engine = None
-            c = input("Press enter to drop base")
             self._parent_connect.execute("DROP DATABASE {};".format(self._name))
             self._parent_connect.execute("commit")
             self._name = None
@@ -103,7 +102,8 @@ class Database:
     def __del__(self):
         if self._connect != None: self._connect.close()
         if self._parent_connect != None: self._parent_connect.close()
-        if self._engine != None: self._connect.close()
+        # if self._engine != None: self._engine.dispose()  # if not commented, raise an error after:
+        # create db -> close application, still don't know Y
         return
 
     def _create_tables(self):  # создание таблиц
