@@ -41,6 +41,10 @@ class Database:
             for record in tmp:
                 self.insert_into(table, record)
 
+    def _create_sup_fun(self):
+        self._connect.execute(q.get_column_names)
+        self._connect.execute("commit")
+
     def _create_insert_(self):
         self._connect.execute(q.insertion)
         self._connect.execute("commit")
@@ -73,6 +77,7 @@ class Database:
         self._create_select_all_()
         self._create_find_functions()
         self._create_update()
+        self._create_sup_fun()
 
     def create_database(self, database_name, username, password, host='localhost'):  # создание бд
         if self._name == None:
@@ -135,7 +140,10 @@ class Database:
 
     def get_table(self, table_name):  # вывод содержимого таблицы
         sel = s.select('*').select_from(s.func.selection(literal_column("NULL::" + table_name)))
+        sel2 = s.select('*').select_from(s.func.get_column_names(table_name.lower()))
+        names = self._connect.execution_options(stream_resuls=True).execute(sel2)
         result = self._connect.execution_options(stream_resuls=True).execute(sel)
+        #print(list(names)) # В НЕЙМ ТЕПЕРЬ БУДЕТ НАЗВАНИЕ СТОБЦОВ
         return list(result)
 
     def clear_table(self, table_name):  # это частичная (очистили одну)

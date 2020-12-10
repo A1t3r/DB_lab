@@ -49,8 +49,21 @@ create table Courses
 	name text
 );
 """
-######################
+###################### GET TABLE COLUMN NAMES
 
+get_column_names = '''
+create or replace 
+function get_column_names(tbl_name text)
+RETURNS table(clmn_name information_schema.sql_identifier) AS
+$$
+	BEGIN
+   		return query
+		SELECT column_name
+		FROM INFORMATION_SCHEMA.COLUMNS 
+		WHERE table_name = tbl_name;
+	END;
+$$ LANGUAGE plpgsql;
+'''
 ######## INIT SELECT SQL
 
 selection1 = '''
@@ -165,7 +178,7 @@ $$ LANGUAGE plpgsql;
 
 update='''
 CREATE or replace
- FUNCTION insertion(tbl text,_values text)
+ FUNCTION update(tbl text,_values text)
   RETURNS void AS
 $$
 BEGIN
