@@ -144,7 +144,14 @@ class Database:
         names = self._connect.execution_options(stream_resuls=True).execute(sel2)
         result = self._connect.execution_options(stream_resuls=True).execute(sel)
         #print(list(names)) # В НЕЙМ ТЕПЕРЬ БУДЕТ НАЗВАНИЕ СТОБЦОВ
-        return list(result)
+        names=list(names)
+        tup=[]
+        for name in  names:
+            name=str(name)[2:-3]
+            tup.append(name)
+        result=list(result)
+        result.insert(0, tuple(tup))
+        return result
 
     def clear_table(self, table_name):  # это частичная (очистили одну)
         self._connect.execute("select Truncation('" + table_name + "'" + ")")
