@@ -8,12 +8,28 @@ import variables as v
 
 def show_data(data=[], data_maxlength=[]):
     length = len(data_maxlength)
+    amount = len(data)
     for row in data:
         format_string = ""
         for i in range(len(row)):
             buf = str(row[i])
-            format_string += buf + " " * (data_maxlength[i] - len(buf)) + "|"
+            format_string += buf + " " * (data_maxlength[i] - len(buf)) + " "
         main_lbox.insert(END, format_string)
+
+    # recoloring
+    if amount >= 1:
+        main_lbox.itemconfig(0, fg=v.sd_name_color)
+
+    num = 1
+    while num < amount:
+        main_lbox.itemconfig(num, bg=v.sd_item_even, fg=v.sd_item_text_color)
+        num += 2
+
+    num = 2
+    while num < amount:
+        main_lbox.itemconfig(num, bg=v.sd_item_odd, fg=v.sd_item_text_color)
+        num += 2
+
     return
 
 
@@ -197,7 +213,7 @@ main_lbox = Listbox(width=v.width_listbox, height=v.height_listbox, font=("Couri
 main_lbox.pack(side=LEFT)
 
 # tools panel
-tools_label = Label(text="tools", width=v.width_tools, bg="red")
+tools_label = Label(text="tools", width=v.width_tools)
 tools_label.pack(side=TOP)
 
 tool_frame = Frame(root, bg='cyan')
@@ -206,7 +222,8 @@ tool_frame.pack(side=TOP)
 show_tables_tool()
 
 ### test block
-show_data([['Username', 'years', 'job'], ['vadim', 3, 'waiter'], ['peter', 18, 'jobfree']], [30, 5, 10])
+show_data([['Username', 'years', 'job'], ['vadim', 3, 'waiter'], ['peter', 18, 'jobfree'],
+           ['vadim', 3, 'waiter'], ['peter', 18, 'jobfree']], [30, 5, 10])
 
 def sdb():
     print(database)

@@ -21,3 +21,9 @@ cd_label_width = 15
 cd_entry_width = 20
 cd_names = ['Database name', 'Username', 'Password', 'Host']
 cd_pad = 10
+
+# show data
+sd_name_color = "gray0"
+sd_item_text_color = "gray6"
+sd_item_even = "gray85"
+sd_item_odd = "gray97"
