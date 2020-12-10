@@ -46,44 +46,17 @@ create table Courses
 
 ######## INIT SELECT SQL ----- NOT TESTED!!!
 
-select_groups = '''
-CREATE OR REPLACE
-        FUNCTION select_Groups()
-        RETURNS table AS $$
-        BEGIN
-		select * from Groups
-        END;
-        $$ LANGUAGE plpgsql;
-'''
-
-select_students = '''
-CREATE OR REPLACE
-        FUNCTION insert_Students()
-        RETURNS table AS $$
-        BEGIN
-		select * from students
-        END;
-        $$ LANGUAGE plpgsql;
-'''
-
-select_courses = '''
-CREATE OR REPLACE
-        FUNCTION select_Courses()
-        RETURNS table AS $$
-        BEGIN
-		select * from courses
-        END;
-        $$ LANGUAGE plpgsql;
-'''
-
-select_schedule = '''
-CREATE OR REPLACE
-        FUNCTION insert_Schedule()
-        RETURNS table AS $$
-        BEGIN
-		select * from Schedule
-        END;
-        $$ LANGUAGE plpgsql;
+selection1 = '''
+CREATE or replace
+ FUNCTION selection(_tbl_type anyelement)
+  RETURNS SETOF anyelement AS
+$$
+BEGIN
+   RETURN QUERY 
+   EXECUTE format('SELECT * FROM %%s -- pg_typeof returns regtype, quoted automatically',
+    pg_typeof(_tbl_type));
+END;
+$$ LANGUAGE plpgsql;
 '''
 
 
@@ -137,68 +110,4 @@ total_insert = [insert_courses, insert_groups, insert_students, insert_schedule]
 for i in range(len(total_insert)):
     total_insert[i] = total_insert[i].replace("\n", "")
 
-
 #######
-
-def insert_into_student(values, id):
-    query = "insert into Student (id, groupID, name, surname) values"
-    buf = ''
-    for item in values:
-        query += (buf + " (" + str(id) + ", " + item[0] + ", " + item[1] +
-                  ", " + item[2] + ")")
-        buf = ','
-        id += 1
-    return query
-
-
-def insert_into_group(values, id):
-    query = "insert into Group (id, name) values"
-    buf = ''
-    for item in values:
-        query += buf + " (" + str(id) + ", " + item[0] + ")"
-        buf = ','
-        id += 1
-    return query
-
-
-def insert_into_schedule(values, empty=None):
-    query = "insert into Student (groupID, weekday, time, courseID, audience, lecturer) values"
-    buf = ''
-    for item in values:
-        query += (buf + " (" + item[0] + ", " + item[1] + ", " + item[2] +
-                  ", " + item[3] + ", " + item[4] + ", " + item[5] + ")")
-        buf = ','
-        id += 1
-    return query
-
-
-def insert_into_course(values, id):
-    query = "insert into Course (id, name) values"
-    buf = ''
-    for item in values:
-        query += (buf + " (" + str(id) + ", " + item[0] + ")")
-        buf = ','
-        id += 1
-    return query
-
-
-def select_all_from(table_name):
-    if table_name in table_names:
-        return "select * from {}".format(table_name)
-    else:
-        raise ValueError("Can't select from non-existent table '{}'".format(table_name))
-
-
-def delete_all_from(table_name):
-    if table_name in table_names:
-        return "delete from {}".format(table_name)
-    else:
-        raise ValueError("Can't clear non-existent table '{}'".format(table_name))
-
-
-insert_dict = {
-    'Student': insert_into_student,
-    'Group': insert_into_group,
-    'Schedule': insert_into_schedule,
-    'Course': insert_into_course
-}

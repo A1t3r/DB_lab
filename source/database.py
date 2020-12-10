@@ -1,4 +1,6 @@
 from sqlalchemy import create_engine, MetaData
+from sqlalchemy.sql.expression import literal_column
+import sqlalchemy as s
 import psycopg2
 import queries as q
 import parsers as pr
@@ -48,6 +50,9 @@ class Database:
         pass
 
     def _create_select_all_(self):
+        t = q.selection1
+        self._connect.execute(t)
+        self._connect.execute("commit")
         pass
 
     def _create_procedures(self):
@@ -114,7 +119,14 @@ class Database:
         self._connect.execute("commit")
         return
 
-    def get_table(self, name):  # вывод содержимого таблицы
+    def get_table(self, table_name):  # вывод содержимого таблицы
+        sel=s.select('*').select_from(s.func.selection(literal_column("NULL::"+table_name)))
+        result = self._connect.execution_options(stream_resuls=True).execute(sel)
+        for i in result:
+            print(i)
+
+
+    def get_table1(self, name):  # вывод содержимого таблицы
         self._metadata.reflect(self._engine)
         if name in self._metadata.tables.keys():
             return q.select_all_from(name)
