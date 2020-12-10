@@ -3,11 +3,13 @@ from tkinter import messagebox as mb
 from database import Database
 from sqlalchemy import exc
 from tkinter.ttk import Combobox
+from queries import table_symbols_num
 
 import variables as v
 
 
-def show_data(data=[], data_maxlength=[]):
+def show_data(data=[], data_maxlength=[], inplace=True):
+    main_lbox.delete(0, END)
     length = len(data_maxlength)
     amount = len(data)
     for row in data:
@@ -215,19 +217,19 @@ main_lbox.pack(side=LEFT)
 def show_tools(tool_frame, database, main_lbox):
     Button(tool_frame, text='Show', command=lambda: show_table(show_combox, database)).grid(row=0, column=0)
     show_combox = Combobox(tool_frame)
-    show_combox['values'] = ('', 'Student', 'Group', 'Schedule', 'Course')
+    show_combox['values'] = ('', 'Students', 'Groups', 'Schedule', 'Courses')
     show_combox.current(0)
     show_combox.grid(row=0, column=1)
 
     Button(tool_frame, text='Clear', command=lambda: clear_table(clear_combox, database)).grid(row=1, column=0)
     clear_combox = Combobox(tool_frame)
-    clear_combox['values'] = ('', 'Student', 'Group', 'Schedule', 'Course')
+    clear_combox['values'] = ('', 'Students', 'Groups', 'Schedule', 'Courses')
     clear_combox.current(0)
     clear_combox.grid(row=1, column=1)
 
     Button(tool_frame, text='Add', command=lambda: add2_table(add_combox, database)).grid(row=2, column=0)
     add_combox = Combobox(tool_frame)
-    add_combox['values'] = ('', 'Student', 'Group', 'Schedule', 'Course')
+    add_combox['values'] = ('', 'Students', 'Groups', 'Schedule', 'Courses')
     add_combox.current(0)
     add_combox.grid(row=2, column=1)
 
@@ -247,8 +249,7 @@ def show_table(combox, database):
         mb.showerror("Error", "No connected database")
         return
 
-    res = database[0].get_table(table_name)
-    show_data(res, [20, 20, 20, 20, 20, 20])
+    show_data(database[0].get_table(table_name), table_symbols_num[table_name])
     return
 
 

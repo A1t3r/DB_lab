@@ -1,4 +1,10 @@
-table_names = frozenset(('Student', 'Group', 'Schedule', 'Course'))
+table_names = frozenset(('Students', 'Groups', 'Schedule', 'Courses'))
+table_symbols_num = {
+    'Students': [4, 7, 15, 15, 15],
+    'Groups': [4, 30],
+    'Schedule': [7, 15, 7, 8, 8, 8, 30],
+    'Courses': [4, 50]
+}
 ###### TABLE CREATION QUERIES
 create_table_students_query = """
 create table Students
@@ -24,7 +30,7 @@ create_table_schedule_query = """
 create table Schedule
 (
 	groupID integer,
-	weekday varchar(20),
+	weekday varchar(15),
 	daytime integer check (daytime >= 0 and daytime <= 8),
 	courseID integer,
 	type varchar(8),

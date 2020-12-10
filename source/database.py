@@ -122,7 +122,7 @@ class Database:
     def get_table(self, table_name):  # вывод содержимого таблицы
         sel=s.select('*').select_from(s.func.selection(literal_column("NULL::"+table_name)))
         result = self._connect.execution_options(stream_resuls=True).execute(sel)
-        return result
+        return list(result)
 
 
     def get_table1(self, name):  # вывод содержимого таблицы

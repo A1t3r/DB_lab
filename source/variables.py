@@ -29,4 +29,4 @@ sd_item_even = "gray85"
 sd_item_odd = "gray97"
 
 # tables
-table_names = ['Student', 'Group', 'Schedule', 'Course']
+table_names = ['Students', 'Groups', 'Schedule', 'Courses']
