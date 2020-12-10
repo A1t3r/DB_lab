@@ -8,7 +8,7 @@ from database import Database
 
 
 password = ''  # enter your password here
-scenario_num = 4  # choose any among 1, 2, 3
+scenario_num = 6  # choose any among 1, 2, 3
 name_db = 'heh'
 username = 'postgres'
 
@@ -37,8 +37,33 @@ if scenario_num == 3:
 if scenario_num == 4:
     db = Database(name_db, username, password)
     db.create_database(name_db, username, password)
-    db.get_table("Students")
-    db.get_table("Courses")
-    db.get_table("Groups")
-    db.get_table("Schedule")
+    print(db.get_table("Students"))
+    print(db.get_table("Courses"))
+    print(db.get_table("Groups"))
+    print(db.get_table("Schedule"))
+    db.delete_database()
+
+if scenario_num == 5:
+    db = Database(name_db, username, password)
+    db.create_database(name_db, username, password)
+    print(db.get_table("Students"))
+    print(db.get_table("Courses"))
+    print(db.get_table("Groups"))
+    print(db.get_table("Schedule"))
+    db.clear_table("Schedule")
+    print(db.get_table("Schedule"))
+    db.clear_all_table()
+    print(db.get_table("Students"))
+    print(db.get_table("Courses"))
+    print(db.get_table("Groups"))
+    db.delete_database()
+
+if scenario_num == 6:
+    db = Database(name_db, username, password)
+    db.create_database(name_db, username, password)
+    print(db.get_table("Students"))
+    print(db.get_table("Courses"))
+    print(db.get_table("Groups"))
+    print(db.get_table("Schedule"))
+    print(db.search_by_FI('Антон','Коркунов'))
     db.delete_database()

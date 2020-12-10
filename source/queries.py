@@ -11,8 +11,8 @@ create table Students
 (
 	id serial primary key,
 	groupID integer,
-	name varchar(15),
 	surname varchar(15),
+	name varchar(15),
 	classes_number integer,
 	foreign key (groupID) references Groups (id)
 );
@@ -50,7 +50,7 @@ create table Courses
 """
 ######################
 
-######## INIT SELECT SQL ----- NOT TESTED!!!
+######## INIT SELECT SQL
 
 selection1 = '''
 CREATE or replace
@@ -59,61 +59,62 @@ CREATE or replace
 $$
 BEGIN
    RETURN QUERY 
-   EXECUTE format('SELECT * FROM %%s -- pg_typeof returns regtype, quoted automatically',
+   EXECUTE format('SELECT * FROM %%s',
     pg_typeof(_tbl_type));
 END;
 $$ LANGUAGE plpgsql;
 '''
 
 
-#######################
-
-
 ####### INIT INSERT SQL
 
-insert_groups = '''
-CREATE OR REPLACE
-        FUNCTION insert_Groups(id integer,name varchar(30) )
-        RETURNS void AS $$
-        BEGIN
-		insert into Groups values(id, name);
-        END;
-        $$ LANGUAGE plpgsql;
+insertion='''
+CREATE or replace
+ FUNCTION insertion(tbl text,_values text)
+  RETURNS void AS
+$$
+BEGIN
+   EXECUTE format('insert into %%s values(%%s)',
+    tbl, _values);
+END;
+$$ LANGUAGE plpgsql;
 '''
 
-insert_students = '''
-CREATE OR REPLACE
-        FUNCTION insert_Students(id integer, groupID integer, name varchar(20), surname varchar(20), classes_number integer)
-        RETURNS void AS $$
-        BEGIN
-		insert into Students values(id, groupID, name, surname, classes_number);
-        END;
-        $$ LANGUAGE plpgsql;
+
+###### TRUNCATION
+
+truncation = '''
+CREATE or replace
+ FUNCTION Truncation(table_ text)
+  RETURNS void AS
+$$
+BEGIN
+   EXECUTE format('Truncate %%s CASCADE', table_);
+END;
+$$ LANGUAGE plpgsql;
 '''
 
-insert_courses = '''
-CREATE OR REPLACE
-        FUNCTION insert_Courses(id integer,name varchar(30) )
-        RETURNS void AS $$
-        BEGIN
-		insert into Courses values(id, name);
-        END;
-        $$ LANGUAGE plpgsql;
+### find functions
+find_in_s_by_FI='''
+CREATE or replace
+  FUNCTION search_in_schedule_by_FI(_name text, _surname text)
+  RETURNS table(
+  	groupID integer,
+	weekday varchar(15),
+	daytime integer,
+	courseID integer,
+	type varchar(8),
+	audience varchar(8),
+	lecturer text
+  ) AS
+$$
+BEGIN
+   RETURN QUERY 
+   select schedule.groupid, schedule.weekday, schedule.daytime, 
+   schedule.courseID, schedule.type, schedule.audience, schedule.lecturer 
+   from Schedule, Students where (
+	Students.name = _name and Students.surname = _surname
+	and Schedule.groupid = Students.groupid);
+END;
+$$ LANGUAGE plpgsql;
 '''
-
-insert_schedule = '''
-CREATE OR REPLACE
-        FUNCTION insert_Schedule(groupID integer, weekday varchar(20), daytime integer, courseID integer, type varchar(8), audience varchar(8), lecturer text)
-        RETURNS void AS $$
-        BEGIN
-		insert into Schedule values(groupID, weekday, daytime, courseID, type, audience, lecturer);
-        END;
-        $$ LANGUAGE plpgsql;
-'''
-
-total_insert = [insert_courses, insert_groups, insert_students, insert_schedule]
-
-for i in range(len(total_insert)):
-    total_insert[i] = total_insert[i].replace("\n", "")
-
-#######

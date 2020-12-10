@@ -13,7 +13,7 @@ width_tools = 25
 db_base_name = 'postgres'
 db_name = 'schedule'
 db_username = 'postgres'
-db_password = '123'
+db_password = ''
 db_host = 'localhost'
 
 # create database
