@@ -27,3 +27,6 @@ sd_name_color = "gray0"
 sd_item_text_color = "gray6"
 sd_item_even = "gray85"
 sd_item_odd = "gray97"
+
+# tables
+table_names = ['Student', 'Group', 'Schedule', 'Course']
