@@ -49,21 +49,30 @@ class Database:
         self._connect.execute(q.find_in_s_by_FI)
         self._connect.execute("commit")
 
-    def _create_delete_(self):
+    def _create_clear_(self):
         self._connect.execute(q.truncation)
+        self._connect.execute("commit")
+
+    def _create_single_delete_(self):
+        self._connect.execute(q.single_delete)
+        self._connect.execute(q.single_delete_for_Schedule)
+        self._connect.execute(q.single_delete_by_FI)
         self._connect.execute("commit")
 
     def _create_select_all_(self):
         t = q.selection1
         self._connect.execute(t)
         self._connect.execute("commit")
+
+    def _create_update(self):
         pass
 
     def _create_procedures(self):
         self._create_insert_()
-        self._create_delete_()
+        self._create_clear_()
         self._create_select_all_()
         self._create_find_functions()
+        self._create_update()
 
     def create_database(self, database_name, username, password, host='localhost'):  # создание бд
         if self._name == None:
@@ -138,8 +147,6 @@ class Database:
             self.clear_table(name)
         return
 
-    # функция частичной очистки одной из таблиц??? - частичная, значит очистить одну таблицу
-    # а полная значит очистить все таблицы
 
     def insert_into(self, table_name, values):  # добавление данных
         res = "'"
@@ -171,8 +178,16 @@ class Database:
     def update_table(self, table):  # Обновление кортежа
         pass
 
-    def delete_by_group(self, group_name):  # Удаление по заранее выбранному текстовому не ключевому полю
-        pass
+    def delete_by_FI(self, name, surname):  # Удаление по заранее выбранному текстовому не ключевому полю
+        self._connect.execute("select delete_from_schedule_by_FI('" + name + "','" + surname + "')")
+        self._connect.execute("commit")
 
-    def single_delete(self, record_id):  # Удаление конкретной записи, выбранной пользователем
-        pass
+    def single_delete(self, table_name, record_id):  # Удаление конкретной записи, выбранной пользователем
+        self._connect.execute("select single_delete('" + table_name + "','" + record_id + "')")
+        self._connect.execute("commit")
+
+    def single_delete_from_Schedule(self, groupid, weekday, daytime):  # Удаление конкретной записи, выбранной пользователем для расписания
+        #self._connect.execute("select single_delete_from_Schedule('" + table_name + "','" + record_id + "')")
+        sel = s.select('*').s.func.single_delete_from_Schedule(groupid, weekday, daytime)
+        self._connect.execute(sel)
+        self._connect.execute("commit")

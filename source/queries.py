@@ -14,8 +14,9 @@ create table Students
 	surname varchar(15),
 	name varchar(15),
 	classes_number integer,
-	foreign key (groupID) references Groups (id)
+	foreign key (groupID) references Groups (id) ON DELETE CASCADE
 );
+create index NameSurnameIndex on Students(name, surname);
 """
 
 create_table_groups_query = """
@@ -37,7 +38,7 @@ create table Schedule
 	audience varchar(8),
 	lecturer text,
 	constraint couple primary key (groupID, weekday, daytime),
-	foreign key (courseID) references Courses (id)
+	foreign key (courseID) references Courses (id) ON DELETE CASCADE
 );
 """
 
@@ -115,6 +116,61 @@ BEGIN
    from Schedule, Students where (
 	Students.name = _name and Students.surname = _surname
 	and Schedule.groupid = Students.groupid);
+END;
+$$ LANGUAGE plpgsql;
+'''
+
+############## DELETE
+
+single_delete='''
+create or replace 
+function single_delete(table_ text, id_ text)
+	returns void as
+	$$
+	BEGIN
+		EXECUTE format('Delete from %s CASCADE where id = %s ', table_, id_);
+	END;
+$$ LANGUAGE plpgsql;
+'''
+
+single_delete_for_Schedule='''
+create or replace 
+function single_delete_from_Schedule(_group_id integer, _weekday varchar(15), _daytime integer)
+	returns void as
+	$$
+	BEGIN
+		Delete from Schedule CASCADE where(
+		groupid = _group_id and
+		weekday = _weekday and
+		daytime = _daytime);
+	END;
+$$ LANGUAGE plpgsql;
+'''
+
+delete_from_schedule_by_FI='''
+CREATE or replace
+  FUNCTION delete_from_schedule_by_FI(_name text, _surname text)
+  RETURNS void AS
+$$
+BEGIN 
+   delete from Schedule where groupid in(
+	select schedule.groupid from Schedule, Students where(
+		Students.name = _name and Students.surname = _surname
+	and Schedule.groupid = Students.groupid));
+END;
+$$ LANGUAGE plpgsql;
+'''
+
+##### UPDATE
+
+update='''
+CREATE or replace
+ FUNCTION insertion(tbl text,_values text)
+  RETURNS void AS
+$$
+BEGIN
+   EXECUTE format('insert into %%s values(%%s)',
+    tbl, _values);
 END;
 $$ LANGUAGE plpgsql;
 '''
