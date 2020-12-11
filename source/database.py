@@ -248,6 +248,6 @@ class Database:
     def single_delete_from_Schedule(self, groupid, weekday,
                                     daytime):  # Удаление конкретной записи, выбранной пользователем для расписания
         # self._connect.execute("select single_delete_from_Schedule('" + table_name + "','" + record_id + "')")
-        sel = s.select(s.func.single_delete_from_Schedule(groupid, weekday, daytime))
+        sel = s.func.single_delete_from_Schedule(groupid, weekday, daytime)
         self._connect.execute(sel)
         self._connect.execute("commit")
