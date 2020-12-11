@@ -1,7 +1,7 @@
 table_names = frozenset(('Students', 'Groups', 'Schedule', 'Courses'))
 table_symbols_num = {
-    'Students': [4, 7, 15, 15, 15],
-    'Groups': [4, 30],
+    'Students': [4, 7, 15, 15],
+    'Groups': [4, 30, 15],
     'Schedule': [7, 15, 7, 8, 8, 8, 30],
     'Courses': [4, 50]
 }

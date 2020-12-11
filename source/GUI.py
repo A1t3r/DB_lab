@@ -414,7 +414,6 @@ def delete_data(main_lbox, database):
     names = main_lbox.get(0).split()
     table_name = None
     for table in v.table_column_names:
-
         if set(names) == set(v.table_column_names[table]):
             table_name = table
             break
@@ -426,7 +425,11 @@ def delete_data(main_lbox, database):
         if answer:
             for id in ids:
                 row = main_lbox.get(id).split()
+                print("groupid", "weekday",
+                      "daytime")
+                print(row)
                 database[0].single_delete_from_Schedule(row[0], row[1], row[2])
+                # single_delete_from_Schedule(groupid, weekday, daytime)
         return
     else:
         answer = mb.askyesno(
@@ -469,7 +472,13 @@ def find_student(ds_entry_name, ds_entry_surname, database):
     name = ds_entry_name.get()
     surname = ds_entry_surname.get()
     result = database[0].search_by_FI(name, surname)
-    print(result)
+
+    cols = [['weekday', 'daytime', 'type', 'audience', 'lecturer']]
+    for row in result:
+        item = row[1:3] + row[4:]
+        cols.append(item)
+    col_width = [15, 7, 8, 8, 40]
+    show_data(cols, col_width)
     return
 
 
@@ -498,14 +507,15 @@ def change_some_table(main_lbox, database):
 
     number = len(v.table_column_names[table_name])
     num = 0
-    for i in range(1, number):
+    for i in range(0, number):
         col_name = v.table_column_names[table_name][i]
         if col_name in {"id", "classes_number"}:
+            print(col_name, "wrong")
             continue
         Label(window, padx=v.cd_pad, pady=v.cd_pad, text=col_name,
-              width=v.cd_label_width).grid(row=i-1, column=0)
+              width=v.cd_label_width).grid(row=i, column=0)
         ent = Entry(window, width=v.cd_entry_width)
-        ent.grid(row=i-1, column=1, padx=v.cd_pad, pady=v.cd_pad)
+        ent.grid(row=i, column=1, padx=v.cd_pad, pady=v.cd_pad)
         entries.append(ent)
         num += 1
 
@@ -528,9 +538,11 @@ def update_in(table_name, database, ids, main_lbox, entries):
         if answer:
             for id in ids:
                 row = main_lbox.get(id).split()
-                database[0].update_talbe(table_name, main_lbox.get(0).split(), values,
-                                         main_lbox.get(0).split()[:2], [row[0], row[1], row[2]])
-                # update_table(tbl, col_to_change, _values, pr_key, pr_key_val)
+                print(table_name, main_lbox.get(0).split(), values,
+                      main_lbox.get(0).split()[:2], [row[0], row[1], row[2]])
+                database[0].update_table(table_name, main_lbox.get(0).split(), values,
+                                         main_lbox.get(0).split()[:3], [row[0], row[1], row[2]])
+                show_data(database[0].get_table(table_name), table_symbols_num[table_name])
         return
     else:
         answer = mb.askyesno(
@@ -539,16 +551,13 @@ def update_in(table_name, database, ids, main_lbox, entries):
         if answer:
             cols = []
             for item in main_lbox.get(0).split():
-                if item == "classes_number":
+                if item == "classes_number" or item == "id":
                     continue
-                    cols.append(item)
+                cols.append(item)
 
             for id in ids:
-                print(table_name, cols, values,
-                      "id", main_lbox.get(id).split()[0])
                 database[0].update_table(table_name, cols, values,
-                                   "id", main_lbox.get(id).split()[0])
-                # update_table(tbl, col_to_change, _values, pr_key, pr_key_val)
+                                   ["id"], list(main_lbox.get(id).split()[0]))
             show_data(database[0].get_table(table_name), table_symbols_num[table_name])
             return
     return
