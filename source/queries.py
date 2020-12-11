@@ -49,6 +49,21 @@ create table Courses
 	name text
 );
 """
+################ TRIGGER
+
+trig= '''
+CREATE FUNCTION groups_trig() RETURNS trigger AS $$
+    BEGIN
+       update Groups set classes_number = classes_number+1 
+	   where Groups.id = NEW.groupid;
+        RETURN NEW;
+    END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER groups_trig after INSERT OR UPDATE or delete ON Schedule
+    FOR EACH ROW EXECUTE PROCEDURE groups_trig();
+'''
+
 ###################### GET TABLE COLUMN NAMES
 
 get_column_names = '''

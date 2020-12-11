@@ -44,6 +44,7 @@ class Database:
 
     def _create_sup_fun(self):
         self._connect.execute(q.get_column_names)
+        self._connect.execute(q.trig)
         self._connect.execute("commit")
 
     def _create_insert_(self):
