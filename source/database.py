@@ -188,7 +188,10 @@ class Database:
         # sel = "select * from search_in_schedule_by_FI" + "('" + name + "'" + "'" + surname + "')"
         sel = s.select('*').select_from(s.func.search_in_schedule_by_FI(name, surname))
         result = self._connect.execution_options(stream_resuls=True).execute(sel)
-        return list(result)
+        true_result=[]
+        for item in result:
+            true_result.append(list(item))
+        return true_result
 
     def update_table(self, tbl, col_to_change, _values, pr_key, pr_key_val):  # Обновление кортежа
 

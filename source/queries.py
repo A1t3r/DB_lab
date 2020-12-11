@@ -52,7 +52,7 @@ create table Courses
 ################ TRIGGER
 
 trig= '''
-CREATE FUNCTION groups_trig() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION groups_trig() RETURNS trigger AS $$
     BEGIN
        update Groups set classes_number = classes_number+1 
 	   where Groups.id = NEW.groupid;
