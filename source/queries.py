@@ -141,7 +141,7 @@ function single_delete(table_ text, id_ text)
 	returns void as
 	$$
 	BEGIN
-		EXECUTE format('Delete from %s CASCADE where id = %s ', table_, id_);
+		EXECUTE format('Delete from %%s CASCADE where id = %%s ', table_, id_);
 	END;
 $$ LANGUAGE plpgsql;
 '''

@@ -78,6 +78,7 @@ class Database:
         self._create_select_all_()
         self._create_find_functions()
         self._create_update()
+        self._create_single_delete_()
         self._create_sup_fun()
 
     def create_database(self, database_name, username, password, host='localhost'):  # создание бд
