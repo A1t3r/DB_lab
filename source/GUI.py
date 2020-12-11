@@ -111,7 +111,23 @@ def create_database_window(database):
 
 
 def connect_database(window, entries, database):
-    pass
+    db_name = entries[0].get()
+    db_username = entries[1].get()
+    db_password = entries[2].get()
+    host = entries[3].get()
+
+    try:
+        database[0] = Database(db_name, db_username, db_password, host)
+        database[0].connect(db_name, db_username, db_password, host)
+    except exc.OperationalError as oe:
+        database[0] = None
+        mb.showerror(
+            "Error",
+            "{}".format(oe))
+        return
+
+    window.destroy()
+    return
 
 
 def connect_database_def(window, database):
@@ -221,6 +237,7 @@ def pack_menu(database):
 def root_settings():
     root.title("The most impressive application name")
     root.resizable(width=False, height=False)
+    return
 
 
 # database
@@ -238,27 +255,65 @@ main_lbox.pack(side=LEFT)
 
 # ------------------------- tool functions ------------------------- #
 def show_tools(tool_frame, database, main_lbox):
-    Button(tool_frame, text='Show', width=v.tl_button_width, command=lambda: show_table(show_combox, database)).grid(row=0, column=0)
+    row = 0
+    Button(tool_frame, text='Show', width=v.tl_button_width,
+           command=lambda: show_table(show_combox, database)).grid(row=row, column=0)
     show_combox = Combobox(tool_frame)
     show_combox['values'] = ('', 'Students', 'Groups', 'Schedule', 'Courses')
     show_combox.current(0)
-    show_combox.grid(row=0, column=1)
+    show_combox.grid(row=row, column=1)
+    row += 1
 
-    Button(tool_frame, text='Clear', width=v.tl_button_width, command=lambda: clear_table(clear_combox, database)).grid(row=1, column=0)
+    Button(tool_frame, text='Clear', width=v.tl_button_width,
+           command=lambda: clear_table(clear_combox, database)).grid(row=row, column=0)
     clear_combox = Combobox(tool_frame)
     clear_combox['values'] = ('', 'Students', 'Groups', 'Schedule', 'Courses')
     clear_combox.current(0)
-    clear_combox.grid(row=1, column=1)
+    clear_combox.grid(row=row, column=1)
+    row += 1
 
-    Button(tool_frame, text='Add', width=v.tl_button_width, command=lambda: add2_table(add_combox, database)).grid(row=2, column=0)
+    Button(tool_frame, text='Add', width=v.tl_button_width,
+           command=lambda: add2_table(add_combox, database)).grid(row=row, column=0)
     add_combox = Combobox(tool_frame)
     add_combox['values'] = ('', 'Students', 'Groups', 'Schedule', 'Courses')
     add_combox.current(0)
-    add_combox.grid(row=2, column=1)
+    add_combox.grid(row=row, column=1)
+    row += 1
 
-    Button(tool_frame, text='Delete', width=v.tl_button_width, command=lambda: delete_data(main_lbox, database)).grid(row=3, column=0)
-    chosen_label = Label(tool_frame, text="chosen: 0")
-    chosen_label.grid(row=3, column=1)
+    Label(tool_frame, text="-" * (v.tl_button_width + 6)).grid(row=row, column=0)
+    chosen_label = Label(tool_frame, text="From shown table:")
+    chosen_label.grid(row=row, column=1)
+    row += 1
+
+    Button(tool_frame, text='Delete', width=v.tl_button_width,
+           command=lambda: delete_data(main_lbox, database)).grid(row=row, column=0)
+    Button(tool_frame, text='Change', width=v.tl_button_width,
+           command=lambda: change_some_table(change_combox, database)).grid(row=row, column=1)
+    row += 1
+
+    Label(tool_frame, text="-" * (v.tl_button_width + 6)).grid(row=row, column=0)
+    Label(tool_frame, text="-" * (v.tl_button_width + 20)).grid(row=row, column=1)
+    row += 1
+
+    Button(tool_frame, text='Del student', width=v.tl_button_width,
+           command=lambda: delete_student(ds_entry_name, ds_entry_surname, database)).grid(
+        row=row, column=0)
+    Button(tool_frame, text='Find', width=v.tl_button_width,
+           command=lambda: find_student(ds_entry_name, ds_entry_surname, database)).grid(
+        row=row, column=1)
+    row += 1
+
+    Label(tool_frame, text="Name").grid(row=row, column=0)
+    Label(tool_frame, text="Surname").grid(row=row+1, column=0)
+    ds_entry_name = Entry(tool_frame)
+    ds_entry_name.grid(row=row, column=1)
+    ds_entry_surname = Entry(tool_frame)
+    ds_entry_surname.grid(row=row+1, column=1)
+    row += 2
+
+    Label(tool_frame, text="-" * (v.tl_button_width + 6)).grid(row=row, column=0)
+    Label(tool_frame, text="-" * (v.tl_button_width + 20)).grid(row=row, column=1)
+    return
 
 
 def show_table(combox, database):
@@ -328,7 +383,10 @@ def add2_table(combox, database):
     number = len(v.table_column_names[table_name])
     num = 0
     for i in range(1, number):
-        Label(window, padx=v.cd_pad, pady=v.cd_pad, text=v.table_column_names[table_name][i],
+        col_name = v.table_column_names[table_name][i]
+        if col_name in {"id", "classes_number"}:
+            continue
+        Label(window, padx=v.cd_pad, pady=v.cd_pad, text=col_name,
               width=v.cd_label_width).grid(row=i-1, column=0)
         ent = Entry(window, width=v.cd_entry_width)
         ent.grid(row=i-1, column=1, padx=v.cd_pad, pady=v.cd_pad)
@@ -342,7 +400,134 @@ def add2_table(combox, database):
 
 
 def delete_data(main_lbox, database):
-    pass
+    if database[0] == None:
+        mb.showerror("Error", "No connected database")
+        return
+
+    ids = list(main_lbox.curselection())
+    if ids[0] == 0:
+        ids.remove(0)
+    if len(ids) == 0:
+        return
+
+    names = main_lbox.get(0).split()
+    table_name = None
+    for table in v.table_column_names:
+        if set(names) == set(v.table_column_names[table]):
+            table_name = table
+            break
+
+    if table_name == "Schedule":
+        answer = mb.askyesno(
+            title="Attention",
+            message="Do you want to delete these rows?")
+        if answer:
+            for id in ids:
+                row = main_lbox.get(id).split()
+                database[0].single_delete_from_Schedule(row[0], row[1], row[2])
+        return
+    else:
+        answer = mb.askyesno(
+            title="Attention",
+            message="Do you want to delete these rows?")
+        if answer:
+            for id in ids:
+                database[0].single_delete(table_name, main_lbox.get(id).split()[0])
+            show_data(database[0].get_table(table_name), table_symbols_num[table_name])
+            return
+    return
+
+
+def delete_student(ds_entry_name, ds_entry_surname, database):  # intersept exception
+    if database[0] == None:
+        mb.showerror("Error", "No connected database")
+        return
+
+    name = ds_entry_name.get()
+    surname = ds_entry_surname.get()
+    database[0].delete_by_FI(name, surname)
+    return
+
+
+def find_student(ds_entry_name, ds_entry_surname, database):
+    if database[0] == None:
+        mb.showerror("Error", "No connected database")
+        return
+
+    name = ds_entry_name.get()
+    surname = ds_entry_surname.get()
+    result = database[0].delete_by_FI(name, surname)
+    print(result)
+    return
+
+
+def change_some_table(main_lbox, database):
+    if database[0] == None:
+        mb.showerror("Error", "No connected database")
+        return
+
+    ids = list(main_lbox.curselection())
+    if ids[0] == 0:
+        ids.remove(0)
+    if len(ids) == 0:
+        return
+
+    names = main_lbox.get(0).split()
+    table_name = None
+    for table in v.table_column_names:
+        if set(names) == set(v.table_column_names[table]):
+            table_name = table
+            break
+
+    # getting values
+    window = Toplevel(root)
+    window.title("Add to {}".format(table_name))
+    entries = []
+
+    number = len(v.table_column_names[table_name])
+    num = 0
+    for i in range(1, number):
+        col_name = v.table_column_names[table_name][i]
+        if col_name in {"id", "classes_number"}:
+            continue
+        Label(window, padx=v.cd_pad, pady=v.cd_pad, text=col_name,
+              width=v.cd_label_width).grid(row=i-1, column=0)
+        ent = Entry(window, width=v.cd_entry_width)
+        ent.grid(row=i-1, column=1, padx=v.cd_pad, pady=v.cd_pad)
+        entries.append(ent)
+        num += 1
+
+    Button(window, text="Update chosen",
+           command=lambda: update_in(table_name, database, ids, main_lbox, entries)).grid(row=num, column=1,
+                                                                                      padx=v.cd_pad, pady=v.cd_pad)
+    ################
+    return
+
+
+def update_in(table_name, database, ids, main_lbox, entries):
+    values = []
+    for entry in entries:
+        values.append(entry.get())
+
+    if table_name == "Schedule":
+        answer = mb.askyesno(
+            title="Attention",
+            message="Do you want to update these rows?")
+        if answer:
+            for id in ids:
+                row = main_lbox.get(id).split()
+                database[0].update(table_name, [row[0], row[1], row[2]], values)
+        return
+    else:
+        answer = mb.askyesno(
+            title="Attention",
+            message="Do you want to update these rows?")
+        if answer:
+            for id in ids:
+                database[0].update(table_name, main_lbox.get(id).split()[0], values)
+            show_data(database[0].get_table(table_name), table_symbols_num[table_name])
+            return
+    return
 ######################################################################
 
 # tools panel
@@ -355,10 +540,6 @@ tool_frame.pack(side=TOP)
 show_tools(tool_frame, database, main_lbox)
 
 ### test block
-show_data([['Username', 'years', 'job'], ['vadim', 3, 'waiter'], ['peter', 18, 'jobfree'],
-           ['vadim', 3, 'waiter'], ['peter', 18, 'jobfree']], [30, 5, 10])
-
-
 def sdb():
     print(database)
 
