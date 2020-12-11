@@ -16,10 +16,10 @@ class Database:
     _engine = None
     _conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
     _id_dict = {
-        'Students': 1,
-        'Groups': 1,
-        'Schedule': 1,
-        'Courses': 1
+        'Students': 0,
+        'Groups': 0,
+        'Schedule': 0,
+        'Courses': 0
     }
 
     def __init__(self, dbname, username, password, host='localhost'):  # стартовая инициализация
@@ -38,6 +38,7 @@ class Database:
     def __fill_tables(self):
         for table in tables:
             tmp = pr.init_insert_parser("data/" + table + ".txt")
+            #self._id_dict[table]=len(tmp)
             for record in tmp:
                 self.insert_into(table, record)
 
@@ -165,7 +166,11 @@ class Database:
         return
 
     def insert_into(self, table_name, values):  # добавление данных
-        res = "'"
+        if(table_name!='Schedule'):
+            res = "'" + str(self._id_dict[table_name]) + ","
+            self._id_dict[table_name]+=1
+        else:
+            res = "'"
         for item in values:
             if type(item) == str:
                 res += "''" + item + "''"

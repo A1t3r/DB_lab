@@ -14,7 +14,7 @@ def init_insert_parser(file):  # парсеры написаны исходя и
             if len(line):
                 if line.find(' ') + 1:  # проверяем имя фамилия ли это, .find() вернет -1 если не нашел пробел
                     tmp = line.split(' ')
-                    output.append((stud_id, id, tmp[0], tmp[1]))
+                    output.append(( id, tmp[0], tmp[1]))
                     stud_id += 1
                 else:
                     id += 1
@@ -28,9 +28,9 @@ def init_insert_parser(file):  # парсеры написаны исходя и
         id = 0
         for item in text:
             if(file == 'data/Groups.txt'):
-                text[id] = [id, text[id], 9]
+                text[id] = [text[id], 9]
             else:
-                text[id] = [id, text[id]]
+                text[id] = [text[id]]
             id += 1
         output = text
     return output
