@@ -61,6 +61,7 @@ if scenario_num == 5:
 if scenario_num == 6:
     db = Database(name_db, username, password)
     db.create_database(name_db, username, password)
+    db.update_table('Schedule',['audience', 'lecturer'],['aud 228','zhmih'],['groupid', 'weekday', 'daytime'],[0,'Понедельник',1])
     print(db.get_table("Students"))
     print(db.get_table("Courses"))
     print(db.get_table("Groups"))

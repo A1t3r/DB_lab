@@ -7,14 +7,15 @@ def init_insert_parser(file):  # парсеры написаны исходя и
     data = f.read()  # все прочитали
     text = data.split('\n')  # поделили строки
     text.pop(0)  # убрали описание
+    num_of_classes = 0
     if file == 'data/Students.txt':  # верну список кортежей вида: (ид, имя, фамилия)
-        stud_id=0
+        stud_id = 0
         for line in text:
             if len(line):
                 if line.find(' ') + 1:  # проверяем имя фамилия ли это, .find() вернет -1 если не нашел пробел
                     tmp = line.split(' ')
-                    output.append((stud_id, id, tmp[0], tmp[1], 5))
-                    stud_id+=1
+                    output.append((stud_id, id, tmp[0], tmp[1]))
+                    stud_id += 1
                 else:
                     id += 1
     elif file == 'data/Schedule.txt':  # Верну кортеж вида
@@ -22,13 +23,18 @@ def init_insert_parser(file):  # парсеры написаны исходя и
             if len(line):
                 tmp = tuple(line.split(','))
                 output.append(tmp)
+                num_of_classes+=1
     else:
-        id=0
+        id = 0
         for item in text:
-            text[id]=[id,text[id]]
-            id+=1
+            if(file == 'data/Groups.txt'):
+                text[id] = [id, text[id], 9]
+            else:
+                text[id] = [id, text[id]]
+            id += 1
         output = text
     return output
+
 
 def personal_info_parser(file):
     f = open(file, 'r')
@@ -36,4 +42,4 @@ def personal_info_parser(file):
     tmp = data.split('\n')
     return tmp
 
-#init_insert_parser("data/Students.txt")
+# init_insert_parser("data/Students.txt")

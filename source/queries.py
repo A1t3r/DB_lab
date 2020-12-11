@@ -13,7 +13,6 @@ create table Students
 	groupID integer,
 	surname varchar(15),
 	name varchar(15),
-	classes_number integer,
 	foreign key (groupID) references Groups (id) ON DELETE CASCADE
 );
 create index NameSurnameIndex on Students(name, surname);
@@ -23,7 +22,8 @@ create_table_groups_query = """
 create table Groups
 (
 	id serial primary key,
-	name varchar(30) check (name is not null)
+	title varchar(30) check (title is not null),
+	classes_number integer
 );
 """
 
@@ -160,16 +160,14 @@ function single_delete_from_Schedule(_group_id integer, _weekday varchar(15), _d
 $$ LANGUAGE plpgsql;
 '''
 
-delete_from_schedule_by_FI='''
+delete_from_student_by_FI='''
 CREATE or replace
-  FUNCTION delete_from_schedule_by_FI(_name text, _surname text)
+  FUNCTION delete_from_student_by_FI(_name text, _surname text)
   RETURNS void AS
 $$
 BEGIN 
-   delete from Schedule where groupid in(
-	select schedule.groupid from Schedule, Students where(
-		Students.name = _name and Students.surname = _surname
-	and Schedule.groupid = Students.groupid));
+	delete from Students where(
+		Students.name = _name and Students.surname = _surname);
 END;
 $$ LANGUAGE plpgsql;
 '''
@@ -177,13 +175,12 @@ $$ LANGUAGE plpgsql;
 ##### UPDATE
 
 update='''
-CREATE or replace
- FUNCTION update(tbl text,_values text)
-  RETURNS void AS
+create or replace function update_record(tbl text, col_to_change text, _values text, pr_key text, pr_key_val text)
+returns void as 
 $$
-BEGIN
-   EXECUTE format('insert into %%s values(%%s)',
-    tbl, _values);
-END;
-$$ LANGUAGE plpgsql;
+    BEGIN
+	    execute format('update %%s set %%s = %%s where %%s = %%s', 
+	    tbl, col_to_change, _values, pr_key, pr_key_val);
+	END;
+$$LANGUAGE plpgsql;
 '''

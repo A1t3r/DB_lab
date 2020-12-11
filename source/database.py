@@ -16,10 +16,10 @@ class Database:
     _engine = None
     _conn_string = "host='{}' dbname='{}' user='{}' password='{}'"
     _id_dict = {
-        'Student': 1,
-        'Group': 1,
+        'Students': 1,
+        'Groups': 1,
         'Schedule': 1,
-        'Course': 1
+        'Courses': 1
     }
 
     def __init__(self, dbname, username, password, host='localhost'):  # стартовая инициализация
@@ -60,7 +60,7 @@ class Database:
     def _create_single_delete_(self):
         self._connect.execute(q.single_delete)
         self._connect.execute(q.single_delete_for_Schedule)
-        self._connect.execute(q.single_delete_by_FI)
+        self._connect.execute(q.delete_from_student_by_FI)
         self._connect.execute("commit")
 
     def _create_select_all_(self):
@@ -69,7 +69,8 @@ class Database:
         self._connect.execute("commit")
 
     def _create_update(self):
-        pass
+        self._connect.execute(q.update)
+        self._connect.execute("commit")
 
     def _create_procedures(self):
         self._create_insert_()
@@ -143,13 +144,13 @@ class Database:
         sel2 = s.select('*').select_from(s.func.get_column_names(table_name.lower()))
         names = self._connect.execution_options(stream_resuls=True).execute(sel2)
         result = self._connect.execution_options(stream_resuls=True).execute(sel)
-        #print(list(names)) # В НЕЙМ ТЕПЕРЬ БУДЕТ НАЗВАНИЕ СТОБЦОВ
-        names=list(names)
-        tup=[]
-        for name in  names:
-            name=str(name)[2:-3]
+        # print(list(names)) # В НЕЙМ ТЕПЕРЬ БУДЕТ НАЗВАНИЕ СТОБЦОВ
+        names = list(names)
+        tup = []
+        for name in names:
+            name = str(name)[2:-3]
             tup.append(name)
-        result=list(result)
+        result = list(result)
         result.insert(0, tuple(tup))
         return result
 
@@ -161,7 +162,6 @@ class Database:
         for name in q.table_names:
             self.clear_table(name)
         return
-
 
     def insert_into(self, table_name, values):  # добавление данных
         res = "'"
@@ -176,33 +176,68 @@ class Database:
         self._connect.execute("select insertion('" + table_name + "'," + res + ")")
         self._connect.execute("commit")
 
-    #  connection = self._engine.raw_connection()
-    #  cursor = connection.cursor()
-    #  cursor.callproc("insert_{}".format(table_name), values)
-    #  results = list(cursor.fetchall())
-    # cursor.close()
-    # connection.commit()
-    # connection.close()
 
     def search_by_FI(self, name, surname):  # Поиск по заранее выбранному(вами) текстовому не ключевому полю
-        #sel = "select * from search_in_schedule_by_FI" + "('" + name + "'" + "'" + surname + "')"
+        # sel = "select * from search_in_schedule_by_FI" + "('" + name + "'" + "'" + surname + "')"
         sel = s.select('*').select_from(s.func.search_in_schedule_by_FI(name, surname))
         result = self._connect.execution_options(stream_resuls=True).execute(sel)
         return list(result)
 
-    def update_table(self, table):  # Обновление кортежа
-        pass
+    def update_table(self, tbl, col_to_change, _values, pr_key, pr_key_val):  # Обновление кортежа
+
+        columns = "("
+        for col in col_to_change:
+            columns += col + ","
+        if len(col_to_change) == 1:
+            columns = columns[1:-1]
+        else:
+            columns = columns[:-1] + ")"
+
+        columns_val = "("
+        for col in _values:
+            if type(col) == str:
+                columns_val += "'" + col + "',"
+            else:
+                columns_val += str(col) + ","
+        if len(_values) == 1:
+            columns_val = columns_val[1:-1]
+        else:
+            columns_val = columns_val[:-1] + ")"
+
+        keys = "("
+        for k in pr_key:
+            keys += k + ","
+        if len(pr_key) == 1:
+            keys = keys[1:-1]
+        else:
+            keys = keys[:-1] + ")"
+
+        keys_val = "("
+        for kv in pr_key_val:
+            if type(kv) == str:
+                keys_val += "'" + kv + "',"
+            else:
+                keys_val += str(kv) + ","
+        if len(pr_key_val) == 1:
+            keys_val = keys_val[1:-1]
+        else:
+            keys_val = keys_val[:-1] + ")"
+
+        sel = (s.func.update_record(tbl, columns, columns_val, keys, keys_val))
+        #sel = "select update_record(" + tbl + "," + c ")"
+        self._connect.execute(sel)
 
     def delete_by_FI(self, name, surname):  # Удаление по заранее выбранному текстовому не ключевому полю
-        self._connect.execute("select delete_from_schedule_by_FI('" + name + "','" + surname + "')")
+        self._connect.execute("select delete_from_student_by_FI('" + name + "','" + surname + "')")
         self._connect.execute("commit")
 
     def single_delete(self, table_name, record_id):  # Удаление конкретной записи, выбранной пользователем
         self._connect.execute("select single_delete('" + table_name + "','" + record_id + "')")
         self._connect.execute("commit")
 
-    def single_delete_from_Schedule(self, groupid, weekday, daytime):  # Удаление конкретной записи, выбранной пользователем для расписания
-        #self._connect.execute("select single_delete_from_Schedule('" + table_name + "','" + record_id + "')")
-        sel = s.select('*').s.func.single_delete_from_Schedule(groupid, weekday, daytime)
+    def single_delete_from_Schedule(self, groupid, weekday,
+                                    daytime):  # Удаление конкретной записи, выбранной пользователем для расписания
+        # self._connect.execute("select single_delete_from_Schedule('" + table_name + "','" + record_id + "')")
+        sel = s.select(s.func.single_delete_from_Schedule(groupid, weekday, daytime))
         self._connect.execute(sel)
         self._connect.execute("commit")
