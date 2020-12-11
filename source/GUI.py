@@ -288,7 +288,7 @@ def show_tools(tool_frame, database, main_lbox):
     Button(tool_frame, text='Delete', width=v.tl_button_width,
            command=lambda: delete_data(main_lbox, database)).grid(row=row, column=0)
     Button(tool_frame, text='Change', width=v.tl_button_width,
-           command=lambda: change_some_table(change_combox, database)).grid(row=row, column=1)
+           command=lambda: change_some_table(main_lbox, database)).grid(row=row, column=1)
     row += 1
 
     Label(tool_frame, text="-" * (v.tl_button_width + 6)).grid(row=row, column=0)
@@ -355,8 +355,9 @@ def clear_table(combox, database):
 def add2_database(window, entries, database, table_name):  # have to be finished!!!!!!!!!!!!!!!!!!
     values = []
     for item in entries:
-        values.append(item)
+        values.append(item.get())
 
+    print(table_name, values)
     database[0].insert_into(table_name, values)
     show_data(database[0].get_table(table_name), table_symbols_num[table_name])
     window.destroy()
@@ -413,6 +414,7 @@ def delete_data(main_lbox, database):
     names = main_lbox.get(0).split()
     table_name = None
     for table in v.table_column_names:
+
         if set(names) == set(v.table_column_names[table]):
             table_name = table
             break
@@ -432,7 +434,8 @@ def delete_data(main_lbox, database):
             message="Do you want to delete these rows?")
         if answer:
             for id in ids:
-                database[0].single_delete(table_name, main_lbox.get(id).split()[0])
+                print(table_name.lower(), main_lbox.get(id).split()[0])
+                database[0].single_delete(table_name.lower(), main_lbox.get(id).split()[0])
             show_data(database[0].get_table(table_name), table_symbols_num[table_name])
             return
     return
@@ -443,9 +446,18 @@ def delete_student(ds_entry_name, ds_entry_surname, database):  # intersept exce
         mb.showerror("Error", "No connected database")
         return
 
+    names = main_lbox.get(0).split()
+    table_name = None
+    for table in v.table_column_names:
+
+        if set(names) == set(v.table_column_names[table]):
+            table_name = table
+            break
+
     name = ds_entry_name.get()
     surname = ds_entry_surname.get()
     database[0].delete_by_FI(name, surname)
+    show_data(database[0].get_table(table_name), table_symbols_num[table_name])
     return
 
 
@@ -456,7 +468,7 @@ def find_student(ds_entry_name, ds_entry_surname, database):
 
     name = ds_entry_name.get()
     surname = ds_entry_surname.get()
-    result = database[0].delete_by_FI(name, surname)
+    result = database[0].search_by_FI(name, surname)
     print(result)
     return
 
@@ -516,15 +528,27 @@ def update_in(table_name, database, ids, main_lbox, entries):
         if answer:
             for id in ids:
                 row = main_lbox.get(id).split()
-                database[0].update(table_name, [row[0], row[1], row[2]], values)
+                database[0].update_talbe(table_name, main_lbox.get(0).split(), values,
+                                         main_lbox.get(0).split()[:2], [row[0], row[1], row[2]])
+                # update_table(tbl, col_to_change, _values, pr_key, pr_key_val)
         return
     else:
         answer = mb.askyesno(
             title="Attention",
             message="Do you want to update these rows?")
         if answer:
+            cols = []
+            for item in main_lbox.get(0).split():
+                if item == "classes_number":
+                    continue
+                    cols.append(item)
+
             for id in ids:
-                database[0].update(table_name, main_lbox.get(id).split()[0], values)
+                print(table_name, cols, values,
+                      "id", main_lbox.get(id).split()[0])
+                database[0].update_table(table_name, cols, values,
+                                   "id", main_lbox.get(id).split()[0])
+                # update_table(tbl, col_to_change, _values, pr_key, pr_key_val)
             show_data(database[0].get_table(table_name), table_symbols_num[table_name])
             return
     return
