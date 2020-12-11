@@ -8,12 +8,14 @@ height_listbox = 20
 
 # tools
 width_tools = 25
+tl_button_width = 5
+tl_frame_pad = 3
 
 # database
 db_base_name = 'postgres'
 db_name = 'schedule'
 db_username = 'postgres'
-db_password = ''
+db_password = '123'
 db_host = 'localhost'
 
 # create database
@@ -30,3 +32,21 @@ sd_item_odd = "gray97"
 
 # tables
 table_names = ['Students', 'Groups', 'Schedule', 'Courses']
+table_column_names = {
+'Students': ['id',
+	'groupID',
+	'surname',
+	'name',
+	'classes'],
+    'Groups': ['id',
+	'name'],
+    'Schedule': ['groupID',
+	'weekday',
+	'daytime',
+	'courseID',
+	'type',
+	'audience',
+	'lecturer'],
+    'Courses': ['id',
+	'name']
+}
