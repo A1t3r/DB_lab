@@ -23,7 +23,7 @@ create_table_groups_query = """
 create table Groups
 (
 	id serial primary key,
-	name varchar(30) check (name is not null)
+	title varchar(30) check (name is not null)
 );
 """
 

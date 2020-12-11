@@ -221,6 +221,7 @@ def pack_menu(database):
 def root_settings():
     root.title("The most impressive application name")
     root.resizable(width=False, height=False)
+    return
 
 
 # database
@@ -259,6 +260,26 @@ def show_tools(tool_frame, database, main_lbox):
     Button(tool_frame, text='Delete', width=v.tl_button_width, command=lambda: delete_data(main_lbox, database)).grid(row=3, column=0)
     chosen_label = Label(tool_frame, text="chosen: 0")
     chosen_label.grid(row=3, column=1)
+
+    Label(tool_frame, text="-" * (v.tl_button_width + 7)).grid(row=4, column=0)
+    Label(tool_frame, text="-" * (v.tl_button_width + 20)).grid(row=4, column=1)
+
+    Button(tool_frame, text='Del student', width=v.tl_button_width,
+           command=lambda: delete_student(ds_entry_name, ds_entry_surname, database)).grid(
+        row=5, column=0)
+    Button(tool_frame, text='Find', width=v.tl_button_width,
+           command=lambda: find_student(ds_entry_name, ds_entry_surname, database)).grid(
+        row=5, column=1)
+    Label(tool_frame, text="Name").grid(row=6, column=0)
+    Label(tool_frame, text="Surname").grid(row=7, column=0)
+    ds_entry_name = Entry(tool_frame)
+    ds_entry_name.grid(row=6, column=1)
+    ds_entry_surname = Entry(tool_frame)
+    ds_entry_surname.grid(row=7, column=1)
+
+    Label(tool_frame, text="-" * (v.tl_button_width + 7)).grid(row=8, column=0)
+    Label(tool_frame, text="-" * (v.tl_button_width + 20)).grid(row=8, column=1)
+    return
 
 
 def show_table(combox, database):
@@ -342,7 +363,56 @@ def add2_table(combox, database):
 
 
 def delete_data(main_lbox, database):
-    pass
+    if database[0] == None:
+        mb.showerror("Error", "No connected database")
+        return
+
+    ids = list(main_lbox.curselection())
+    if ids[0] == 0:
+        ids.remove(0)
+    if len(ids) == 0:
+        return
+
+    names = main_lbox.get(0).split()
+    table_name = None
+    for table in v.table_column_names:
+        if set(names) == set(v.table_column_names[table]):
+            table_name = table
+            break
+
+    if table_name == "Schedule":
+        # single_delete_from_Schedule(groupid, weekday, daytime)
+        pass
+    else:
+        answer = mb.askyesno(
+            title="Attention",
+            message="Do you want to delete these rows?")
+        if answer:
+            for id in ids:
+                database[0].single_delete(table_name, list(main_lbox.get(id))[0])
+            show_data(database[0].get_table(table_name), table_symbols_num[table_name])
+            return
+    return
+
+
+def delete_student(ds_entry_name, ds_entry_surname, database):  # intersept exception
+    if database[0] == None:
+        mb.showerror("Error", "No connected database")
+        return
+
+    name = ds_entry_name.get()
+    surname = ds_entry_surname.get()
+    result = database[0].delete_by_FI(name, surname)
+    print(result)
+    return
+
+
+def find_student(ds_entry_name, ds_entry_surname, database):
+    if database[0] == None:
+        mb.showerror("Error", "No connected database")
+        return
+
+    return
 ######################################################################
 
 # tools panel
@@ -355,10 +425,6 @@ tool_frame.pack(side=TOP)
 show_tools(tool_frame, database, main_lbox)
 
 ### test block
-show_data([['Username', 'years', 'job'], ['vadim', 3, 'waiter'], ['peter', 18, 'jobfree'],
-           ['vadim', 3, 'waiter'], ['peter', 18, 'jobfree']], [30, 5, 10])
-
-
 def sdb():
     print(database)
 
