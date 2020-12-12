@@ -21,7 +21,7 @@ def db_base_name():
         for line in f:
             values = line.split(sep='#')
             if values[0] == 'db_base_name':
-                return values[1]
+                return values[1].rstrip()
 
 
 def db_name():
@@ -29,7 +29,7 @@ def db_name():
         for line in f:
             values = line.split(sep='#')
             if values[0] == 'db_name':
-                return values[1]
+                return values[1].rstrip()
 
 
 def db_username():
@@ -37,7 +37,7 @@ def db_username():
         for line in f:
             values = line.split(sep='#')
             if values[0] == 'db_username':
-                return values[1]
+                return values[1].rstrip()
 
 
 def db_password():
@@ -45,7 +45,7 @@ def db_password():
         for line in f:
             values = line.split(sep='#')
             if values[0] == 'db_password':
-                return values[1]
+                return values[1].rstrip()
 
 
 def db_host():
@@ -53,7 +53,7 @@ def db_host():
         for line in f:
             values = line.split(sep='#')
             if values[0] == 'db_host':
-                return values[1]
+                return values[1].rstrip()
 
 
 # create database

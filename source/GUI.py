@@ -237,7 +237,7 @@ def update_default_txt(window, entries, values):
     with open(v.def_url, "w") as f:
         num = 0
         for entry in entries:
-            f.write(values[num][0] + "#" + str(entry.get()))
+            f.write(values[num][0] + "#" + str(entry.get()) + "\n")
             num += 1
 
     window.destroy()
@@ -252,7 +252,7 @@ def update_default():
 
     with open(v.def_url) as f:
         for line in f:
-            values.append(line.split(sep="#"))
+            values.append(line.rstrip().split(sep="#"))
 
     num = 0
     for i in range(len(v.cd_names)):
