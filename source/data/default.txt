@@ -1,0 +1,4 @@
+db_base_name mydb
+db_name mydb
+db_username postgres
+db_password 123

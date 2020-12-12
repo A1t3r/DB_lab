@@ -68,9 +68,9 @@ def create_database(window, entries, database):
 
 
 def create_database_def(window, database):
-    database[0] = Database(v.db_name, v.db_username, v.db_password)
+    database[0] = Database(v.db_name(), v.db_username(), v.db_password())
     try:
-        database[0].create_database(v.db_name, v.db_username, v.db_password)
+        database[0].create_database(v.db_name(), v.db_username(), v.db_password())
     except exc.ProgrammingError as pe:
         database[0] = None
         answer = mb.askyesno(
@@ -131,9 +131,9 @@ def connect_database(window, entries, database):
 
 
 def connect_database_def(window, database):
-    database[0] = Database(v.db_name, v.db_username, v.db_password)
+    database[0] = Database(v.db_name(), v.db_username(), v.db_password())
     try:
-        database[0].connect(v.db_name, v.db_username, v.db_password)
+        database[0].connect(v.db_name(), v.db_username(), v.db_password())
     except exc.OperationalError as oe:
         database[0] = None
         mb.showerror(
@@ -217,11 +217,64 @@ def update_window(database):
     return
 
 
+def disconnect(database):
+    if database[0] == None:
+        mb.showerror(
+            "Error",
+            "No existing connection"
+        )
+        return
+    answer = mb.askyesno(
+        title="Attention",
+        message="Do you want to disconnect?")
+    if answer:
+        database[0] = None
+        show_data()
+        return
+
+
+def update_default_txt(window, entries, values):
+    with open(v.def_url, "w") as f:
+        num = 0
+        for entry in entries:
+            f.write(values[num][0] + " " + str(entry.get()) + "\n")
+            num += 1
+
+    window.destroy()
+    return
+
+
+def update_default():
+    window = Toplevel(root)
+    window.title("Update default")
+    entries = []
+    values = []
+
+    with open(v.def_url) as f:
+        for line in f:
+            values.append(line.split())
+
+    num = 0
+    for i in range(len(v.cd_names)):
+        Label(window, padx=v.cd_pad, pady=v.cd_pad, text=values[i][0], width=v.cd_label_width).grid(row=i, column=0)
+        ent = Entry(window, width=v.cd_entry_width)
+        ent.grid(row=i, column=1, padx=v.cd_pad, pady=v.cd_pad)
+        ent.insert(0, values[i][1])
+        entries.append(ent)
+        num += 1
+
+    Button(window, text="Set",
+           command=lambda: update_default_txt(window, entries, values)).grid(row=num, column=1,
+                                                                            padx=v.cd_pad, pady=v.cd_pad)
+
+
 def pack_menu(database):
     db_menu = Menu()
     db_menu.add_command(label="Create", command=lambda: create_database_window(database))
     db_menu.add_command(label="Connect", command=lambda: connect_database_window(database))
     db_menu.add_command(label="Update procedures", command=lambda: update_window(database))
+    db_menu.add_command(label="New default", command=lambda: update_default())
+    db_menu.add_command(label="Disconnect", command=lambda: disconnect(database))
     db_menu.add_command(label="Delete", command=lambda: detele_database(database))
 
     table_menu = Menu()
