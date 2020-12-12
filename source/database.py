@@ -35,6 +35,11 @@ class Database:
         # self._parent_connect.execute("commit")
         return
 
+    def reload_tables(self):
+        self.clear_all_table()
+        self.__fill_tables()
+        return
+
     def __fill_tables(self):
         for table in tables:
             tmp = pr.init_insert_parser("data/" + table + ".txt")

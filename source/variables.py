@@ -13,7 +13,7 @@ tl_frame_pad = 3
 
 # database
 db_base_name = 'postgres'
-db_name = 'schedule2'
+db_name = 'schedule3'
 db_username = 'postgres'
 db_password = '123'
 db_host = 'localhost'

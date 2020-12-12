@@ -194,7 +194,8 @@ def reload_tables(database):
         mb.showerror("Error", "Connection doesn't exist")
         return
 
-    database[0].reload()
+    database[0].reload_tables()
+    show_data()
     return
 
 
@@ -224,7 +225,7 @@ def pack_menu(database):
     db_menu.add_command(label="Delete", command=lambda: detele_database(database))
 
     table_menu = Menu()
-    table_menu.add_command(label="Reload data", command=lambda: reload_tables(database))
+    table_menu.add_command(label="Reload tables", command=lambda: reload_tables(database))
     table_menu.add_command(label="Clear tables", command=lambda: clear_tables(database))
 
     main_menu = Menu()
@@ -352,12 +353,11 @@ def clear_table(combox, database):
     return
 
 
-def add2_database(window, entries, database, table_name):  # have to be finished!!!!!!!!!!!!!!!!!!
+def add2_database(window, entries, database, table_name):
     values = []
     for item in entries:
         values.append(item.get())
 
-    print(table_name, values)
     database[0].insert_into(table_name, values)
     show_data(database[0].get_table(table_name), table_symbols_num[table_name])
     window.destroy()
@@ -383,14 +383,14 @@ def add2_table(combox, database):
 
     number = len(v.table_column_names[table_name])
     num = 0
-    for i in range(1, number):
+    for i in range(0, number):
         col_name = v.table_column_names[table_name][i]
         if col_name in {"id", "classes_number"}:
             continue
         Label(window, padx=v.cd_pad, pady=v.cd_pad, text=col_name,
-              width=v.cd_label_width).grid(row=i-1, column=0)
+              width=v.cd_label_width).grid(row=i, column=0)
         ent = Entry(window, width=v.cd_entry_width)
-        ent.grid(row=i-1, column=1, padx=v.cd_pad, pady=v.cd_pad)
+        ent.grid(row=i, column=1, padx=v.cd_pad, pady=v.cd_pad)
         entries.append(ent)
         num += 1
 
@@ -425,9 +425,6 @@ def delete_data(main_lbox, database):
         if answer:
             for id in ids:
                 row = main_lbox.get(id).split()
-                print("groupid", "weekday",
-                      "daytime")
-                print(row)
                 database[0].single_delete_from_Schedule(row[0], row[1], row[2])
                 # single_delete_from_Schedule(groupid, weekday, daytime)
         return
@@ -437,7 +434,6 @@ def delete_data(main_lbox, database):
             message="Do you want to delete these rows?")
         if answer:
             for id in ids:
-                print(table_name.lower(), main_lbox.get(id).split()[0])
                 database[0].single_delete(table_name.lower(), main_lbox.get(id).split()[0])
             show_data(database[0].get_table(table_name), table_symbols_num[table_name])
             return
@@ -506,11 +502,10 @@ def change_some_table(main_lbox, database):
     entries = []
 
     number = len(v.table_column_names[table_name])
-    num = 0
+    num = 1
     for i in range(0, number):
         col_name = v.table_column_names[table_name][i]
         if col_name in {"id", "classes_number"}:
-            print(col_name, "wrong")
             continue
         Label(window, padx=v.cd_pad, pady=v.cd_pad, text=col_name,
               width=v.cd_label_width).grid(row=i, column=0)
@@ -520,13 +515,13 @@ def change_some_table(main_lbox, database):
         num += 1
 
     Button(window, text="Update chosen",
-           command=lambda: update_in(table_name, database, ids, main_lbox, entries)).grid(row=num, column=1,
+           command=lambda: update_in(table_name, database, ids, main_lbox, entries, window)).grid(row=num, column=1,
                                                                                       padx=v.cd_pad, pady=v.cd_pad)
     ################
     return
 
 
-def update_in(table_name, database, ids, main_lbox, entries):
+def update_in(table_name, database, ids, main_lbox, entries, window):
     values = []
     for entry in entries:
         values.append(entry.get())
@@ -538,11 +533,10 @@ def update_in(table_name, database, ids, main_lbox, entries):
         if answer:
             for id in ids:
                 row = main_lbox.get(id).split()
-                print(table_name, main_lbox.get(0).split(), values,
-                      main_lbox.get(0).split()[:2], [row[0], row[1], row[2]])
                 database[0].update_table(table_name, main_lbox.get(0).split(), values,
                                          main_lbox.get(0).split()[:3], [row[0], row[1], row[2]])
                 show_data(database[0].get_table(table_name), table_symbols_num[table_name])
+                window.destroy()
         return
     else:
         answer = mb.askyesno(
@@ -559,7 +553,7 @@ def update_in(table_name, database, ids, main_lbox, entries):
                 database[0].update_table(table_name, cols, values,
                                    ["id"], list(main_lbox.get(id).split()[0]))
             show_data(database[0].get_table(table_name), table_symbols_num[table_name])
-            return
+            window.destroy()
     return
 ######################################################################
 
@@ -571,13 +565,5 @@ tool_frame = Frame(root, padx=v.tl_frame_pad, pady=v.tl_frame_pad)
 tool_frame.pack(side=TOP)
 
 show_tools(tool_frame, database, main_lbox)
-
-### test block
-def sdb():
-    print(database)
-
-
-Button(text="show database", command=sdb).pack()
-#####
 
 root.mainloop()
