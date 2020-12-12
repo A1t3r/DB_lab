@@ -1,2 +1,3 @@
-python source\GUI.py
+cd source\
+python GUI.py
 exit

@@ -1,3 +1,2 @@
 .idea
-sourse/venv
-sourse/__pycache__
+__pycache__

@@ -19,7 +19,7 @@ def_url = r"data\default.txt"
 def db_base_name():
     with open(def_url) as f:
         for line in f:
-            values = line.split()
+            values = line.split(sep='#')
             if values[0] == 'db_base_name':
                 return values[1]
 
@@ -27,7 +27,7 @@ def db_base_name():
 def db_name():
     with open(def_url) as f:
         for line in f:
-            values = line.split()
+            values = line.split(sep='#')
             if values[0] == 'db_name':
                 return values[1]
 
@@ -35,7 +35,7 @@ def db_name():
 def db_username():
     with open(def_url) as f:
         for line in f:
-            values = line.split()
+            values = line.split(sep='#')
             if values[0] == 'db_username':
                 return values[1]
 
@@ -43,7 +43,7 @@ def db_username():
 def db_password():
     with open(def_url) as f:
         for line in f:
-            values = line.split()
+            values = line.split(sep='#')
             if values[0] == 'db_password':
                 return values[1]
 
@@ -51,7 +51,7 @@ def db_password():
 def db_host():
     with open(def_url) as f:
         for line in f:
-            values = line.split()
+            values = line.split(sep='#')
             if values[0] == 'db_host':
                 return values[1]
 
