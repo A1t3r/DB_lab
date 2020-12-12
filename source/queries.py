@@ -59,7 +59,7 @@ CREATE OR REPLACE FUNCTION groups_trig() RETURNS trigger AS $$
         RETURN NEW;
     END;
 $$ LANGUAGE plpgsql;
-
+drop trigger if exists groups_trig on Schedule cascade;
 CREATE TRIGGER groups_trig after INSERT OR UPDATE or delete ON Schedule
     FOR EACH ROW EXECUTE PROCEDURE groups_trig();
 '''

@@ -37,13 +37,15 @@ class Database:
 
     def reload_tables(self):
         self.clear_all_table()
+        for k in self._id_dict.keys():
+            self._id_dict[k] = 0
         self.__fill_tables()
         return
 
     def __fill_tables(self):
         for table in tables:
             tmp = pr.init_insert_parser("data/" + table + ".txt")
-            #self._id_dict[table]=len(tmp)
+            # self._id_dict[table]=len(tmp)
             for record in tmp:
                 self.insert_into(table, record)
 
@@ -172,9 +174,9 @@ class Database:
         return
 
     def insert_into(self, table_name, values):  # добавление данных
-        if(table_name!='Schedule'):
+        if (table_name != 'Schedule'):
             res = "'" + str(self._id_dict[table_name]) + ","
-            self._id_dict[table_name]+=1
+            self._id_dict[table_name] += 1
         else:
             res = "'"
         for item in values:
@@ -188,14 +190,16 @@ class Database:
         self._connect.execute("select insertion('" + table_name + "'," + res + ")")
         self._connect.execute("commit")
 
-
     def search_by_FI(self, name, surname):  # Поиск по заранее выбранному(вами) текстовому не ключевому полю
         # sel = "select * from search_in_schedule_by_FI" + "('" + name + "'" + "'" + surname + "')"
         sel = s.select('*').select_from(s.func.search_in_schedule_by_FI(name, surname))
         result = self._connect.execution_options(stream_resuls=True).execute(sel)
-        true_result=[]
+        true_result = []
         for item in result:
             true_result.append(list(item))
+        if not len(true_result[1:]):
+            true_result.append("no available data")
+            return true_result[1:]
         return true_result
 
     def update_table(self, tbl, col_to_change, _values, pr_key, pr_key_val):  # Обновление кортежа
@@ -239,7 +243,7 @@ class Database:
             keys_val = keys_val[:-1] + ")"
 
         sel = (s.func.update_record(tbl, columns, columns_val, keys, keys_val))
-        #sel = "select update_record(" + tbl + "," + c ")"
+        # sel = "select update_record(" + tbl + "," + c ")"
         self._connect.execute(sel)
 
     def delete_by_FI(self, name, surname):  # Удаление по заранее выбранному текстовому не ключевому полю
