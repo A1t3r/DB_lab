@@ -14,6 +14,7 @@ def show_data(data=[], data_maxlength=[], inplace=True):
 
     length = len(data_maxlength)
     amount = len(data)
+	
     for row in data:
         format_string = ""
         for i in range(len(row)):
@@ -56,11 +57,11 @@ def create_database(window, entries, database):
             connect_database_def(window, database)
         window.destroy()
         return
-    except exc.OperationalError as oe:
-        database[0] = None
-        mb.showerror(
-            "Error",
-            "{}".format(oe))
+    # except exc.OperationalError as oe:
+    #    database[0] = None
+    #    mb.showerror(
+    #        "Error",
+    #        "{}".format(oe))
         return
 
     window.destroy()
@@ -166,7 +167,7 @@ def connect_database_window(database):
     Button(window, text="Connect def", command=lambda: connect_database_def(window, database)).grid(row=num,
                                                                                                     column=0)
     Button(window, text="Connect",
-           command=lambda: create_database(window, entries, database)).grid(row=num, column=1,
+           command=lambda: connect_database(window, entries, database)).grid(row=num, column=1,
                                                                             padx=v.cd_pad, pady=v.cd_pad)
     return
 
