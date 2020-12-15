@@ -45,7 +45,6 @@ class Database:
     def __fill_tables(self):
         for table in tables:
             tmp = pr.init_insert_parser("data/" + table + ".txt")
-            # self._id_dict[table]=len(tmp)
             for record in tmp:
                 self.insert_into(table, record)
 
