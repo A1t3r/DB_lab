@@ -4,6 +4,7 @@ import sqlalchemy as s
 import psycopg2
 import queries as q
 import parsers as pr
+from sqlalchemy.util import NoneType
 
 tables = ('Groups', 'Students', 'Courses', 'Schedule')
 
@@ -49,6 +50,8 @@ class Database:
                 sel2 =s.func.get_id(key.lower())
                 res = self._connect.execution_options(stream_resuls=True).execute(sel2)
                 res = list(res)
+                if type(res[0]._row[0]) == NoneType:
+                    return
                 self._id_dict[key] = int(res[0]._row[0])
 
     def _create_sup_fun(self):
@@ -192,8 +195,8 @@ class Database:
                 res += str(item)
             res += ","
         res = res[:-1] + "'"
-        if table_name == 'Groups':
-            res = res[:-1] + ", 0 " + "'"
+       # if table_name == 'Groups':
+       #     res = res[:-1] + ", 0 " + "'"
         # sel = s.select(s.func.insertion(literal_column(table_name),res))
         self._connect.execute("select insertion('" + table_name + "'," + res + ")")
         self._connect.execute("commit")
