@@ -27,12 +27,6 @@ class Database:
         self._parent_connect = engine.connect()
         self._metadata = MetaData()
         self._parent_connect.execute("commit")
-        # self.create_database(dbname, username, password)
-        # self._create_tables()
-        # self._create_procedures()  # create init postgres procedures
-        # for table in tables:
-        #    self.insert_into(table, pr.init_insert_parser("data/" + table + ".txt"))
-        # self._parent_connect.execute("commit")
         return
 
     def reload_tables(self):
@@ -49,9 +43,18 @@ class Database:
             for record in tmp:
                 self.insert_into(table, record)
 
+    def update_id(self):
+        for key in self._id_dict.keys():
+            if key != 'Schedule':
+                sel2 =s.func.get_id(key.lower())
+                res = self._connect.execution_options(stream_resuls=True).execute(sel2)
+                res = list(res)
+                self._id_dict[key] = int(res[0]._row[0])
+
     def _create_sup_fun(self):
         self._connect.execute(q.get_column_names)
         self._connect.execute(q.trig)
+        self._connect.execute(q.get_id)
         self._connect.execute("commit")
 
     def _create_insert_(self):
@@ -115,7 +118,7 @@ class Database:
             self._engine = engine
             self._connect = engine.connect()
             self._connect.execute("commit")
-
+            self.update_id()
             self._name = database_name
         else:
             raise ValueError("Already connected to '{}'".format(self._name))
@@ -155,12 +158,15 @@ class Database:
         names = self._connect.execution_options(stream_resuls=True).execute(sel2)
         result = self._connect.execution_options(stream_resuls=True).execute(sel)
         # print(list(names)) # В НЕЙМ ТЕПЕРЬ БУДЕТ НАЗВАНИЕ СТОБЦОВ
+        result = list(result)
+        if not len(result):
+            result.append("no available data")
+            return result
         names = list(names)
         tup = []
         for name in names:
             name = str(name)[2:-3]
             tup.append(name)
-        result = list(result)
         result.insert(0, tuple(tup))
         return result
 
@@ -174,7 +180,7 @@ class Database:
         return
 
     def insert_into(self, table_name, values):  # добавление данных
-        if (table_name != 'Schedule'):
+        if table_name != 'Schedule':
             res = "'" + str(self._id_dict[table_name]) + ","
             self._id_dict[table_name] += 1
         else:
@@ -186,20 +192,29 @@ class Database:
                 res += str(item)
             res += ","
         res = res[:-1] + "'"
+        if table_name == 'Groups':
+            res = res[:-1] + ", 0 " + "'"
         # sel = s.select(s.func.insertion(literal_column(table_name),res))
         self._connect.execute("select insertion('" + table_name + "'," + res + ")")
         self._connect.execute("commit")
 
     def search_by_FI(self, name, surname):  # Поиск по заранее выбранному(вами) текстовому не ключевому полю
-        # sel = "select * from search_in_schedule_by_FI" + "('" + name + "'" + "'" + surname + "')"
+        sel2 = s.select('*').select_from(s.func.get_column_names('schedule'.lower()))
         sel = s.select('*').select_from(s.func.search_in_schedule_by_FI(name, surname))
         result = self._connect.execution_options(stream_resuls=True).execute(sel)
+        names = self._connect.execution_options(stream_resuls=True).execute(sel2)
         true_result = []
         for item in result:
             true_result.append(list(item))
-        if not len(true_result[1:]):
-            true_result.append("no available data")
-            return true_result[1:]
+        if not len(true_result):
+            true_result.append('result = ')
+            true_result.append('no available data')
+            return true_result
+        tup = []
+        for name in names:
+            name = str(name)[2:-3]
+            tup.append(name)
+        true_result.insert(0, tuple(tup))
         return true_result
 
     def update_table(self, tbl, col_to_change, _values, pr_key, pr_key_val):  # Обновление кортежа

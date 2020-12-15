@@ -7,7 +7,7 @@
 from database import Database
 
 
-password = ''  # enter your password here
+password = 'Vjycnhjy1'  # enter your password here
 scenario_num = 6  # choose any among 1, 2, 3
 name_db = 'heh'
 username = 'postgres'
@@ -61,10 +61,14 @@ if scenario_num == 5:
 if scenario_num == 6:
     db = Database(name_db, username, password)
     db.create_database(name_db, username, password)
-    db.update_table('Schedule',['audience', 'lecturer'],['aud 228','zhmih'],['groupid', 'weekday', 'daytime'],[0,'Понедельник',1])
+    db.update_table('Students',['groupid', 'surname', 'name'],[0,'32','aud 228'],['id'],[4])
     print(db.get_table("Students"))
     print(db.get_table("Courses"))
     print(db.get_table("Groups"))
     print(db.get_table("Schedule"))
+    db.insert_into('Students', [0,'hh','ht'])
+    db.delete_by_FI('Семен', 'Волох')
+    db.single_delete_from_Schedule(0, "Понедельник", 1)
+
     print(db.search_by_FI('Антон','Коркунов'))
     db.delete_database()

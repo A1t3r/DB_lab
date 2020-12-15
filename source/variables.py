@@ -11,50 +11,12 @@ width_tools = 25
 tl_button_width = 9
 tl_frame_pad = 3
 
-
-# default
-def_url = r"data\default.txt"
-
-
-def db_base_name():
-    with open(def_url) as f:
-        for line in f:
-            values = line.split(sep='#')
-            if values[0] == 'db_base_name':
-                return values[1].rstrip()
-
-
-def db_name():
-    with open(def_url) as f:
-        for line in f:
-            values = line.split(sep='#')
-            if values[0] == 'db_name':
-                return values[1].rstrip()
-
-
-def db_username():
-    with open(def_url) as f:
-        for line in f:
-            values = line.split(sep='#')
-            if values[0] == 'db_username':
-                return values[1].rstrip()
-
-
-def db_password():
-    with open(def_url) as f:
-        for line in f:
-            values = line.split(sep='#')
-            if values[0] == 'db_password':
-                return values[1].rstrip()
-
-
-def db_host():
-    with open(def_url) as f:
-        for line in f:
-            values = line.split(sep='#')
-            if values[0] == 'db_host':
-                return values[1].rstrip()
-
+# database
+db_base_name = 'postgres'
+db_name = 'schedule3'
+db_username = 'postgres'
+db_password = 'Vjycnhjy1'
+db_host = 'localhost'
 
 # create database
 cd_label_width = 15
@@ -71,20 +33,20 @@ sd_item_odd = "gray97"
 # tables
 table_names = ['Students', 'Groups', 'Schedule', 'Courses']
 table_column_names = {
-    'Students': ['id',
-                 'groupid',
-                 'surname',
-                 'name'],
+'Students': ['id',
+	'groupid',
+	'surname',
+	'name'],
     'Groups': ['id',
-               'title',
-               'classes_number'],
+	'title',
+	'classes_number'],
     'Schedule': ['groupid',
-                 'weekday',
-                 'daytime',
-                 'courseid',
-                 'type',
-                 'audience',
-                 'lecturer'],
+	'weekday',
+	'daytime',
+	'courseid',
+	'type',
+	'audience',
+	'lecturer'],
     'Courses': ['id',
-                'name']
+	'name']
 }
