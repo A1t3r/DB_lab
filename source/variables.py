@@ -15,7 +15,7 @@ tl_frame_pad = 3
 db_base_name = 'postgres'
 db_name = 'schedule3'
 db_username = 'postgres'
-db_password = 'Vjycnhjy1'
+db_password = '1'
 db_host = 'localhost'
 
 # create database

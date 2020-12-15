@@ -7,7 +7,7 @@
 from database import Database
 
 
-password = 'Vjycnhjy1'  # enter your password here
+password = ''  # enter your password here
 scenario_num = 6  # choose any among 1, 2, 3
 name_db = 'heh'
 username = 'postgres'
