@@ -94,6 +94,21 @@ END;
 $$ LANGUAGE plpgsql;
 '''
 
+#### GET MAX ID
+get_id = '''
+     CREATE or replace
+ FUNCTION get_id(tbl text)
+  RETURNS integer AS
+$$ 
+DECLARE maxid INT;
+BEGIN
+   EXECUTE format('SELECT max(id) FROM %%s ',
+    tbl) INTO maxid;
+	return maxid+1;
+END;
+$$ LANGUAGE plpgsql;
+'''
+
 
 ####### INIT INSERT SQL
 
