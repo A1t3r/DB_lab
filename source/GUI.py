@@ -46,7 +46,7 @@ def create_database(window, entries, database):
     host = entries[3].get()
 
     try:
-        database[0] = Database(db_name, db_username, db_password, host)
+        database[0] = Database("", db_username, db_password, host)
         database[0].create_database(db_name, db_username, db_password, host)
     except exc.ProgrammingError as pe:
         database[0] = None
@@ -69,7 +69,7 @@ def create_database(window, entries, database):
 
 
 def create_database_def(window, database):
-    database[0] = Database(v.db_name(), v.db_username(), v.db_password())
+    database[0] = Database("", v.db_username(), v.db_password())
     try:
         database[0].create_database(v.db_name(), v.db_username(), v.db_password())
     except exc.ProgrammingError as pe:
