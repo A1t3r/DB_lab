@@ -51,17 +51,30 @@ create table Courses
 """
 ################ TRIGGER
 
-trig= '''
-CREATE OR REPLACE FUNCTION groups_trig() RETURNS trigger AS $$
+trig1= '''
+CREATE OR REPLACE FUNCTION groups_trig1() RETURNS trigger AS $$
     BEGIN
        update Groups set classes_number = classes_number+1 
 	   where Groups.id = NEW.groupid;
         RETURN NEW;
     END;
 $$ LANGUAGE plpgsql;
-drop trigger if exists groups_trig on Schedule cascade;
-CREATE TRIGGER groups_trig after INSERT OR UPDATE or delete ON Schedule
-    FOR EACH ROW EXECUTE PROCEDURE groups_trig();
+drop trigger if exists groups_trig1 on Schedule cascade;
+CREATE TRIGGER groups_trig1 after INSERT OR UPDATE ON Schedule
+    FOR EACH ROW EXECUTE PROCEDURE groups_trig1();
+'''
+
+trig2='''
+CREATE OR REPLACE FUNCTION groups_trig2() RETURNS trigger AS $$
+    BEGIN
+       update Groups set classes_number = classes_number-1 
+	   where Groups.id = OLD.groupid;
+        RETURN NEW;
+    END;
+$$ LANGUAGE plpgsql;
+drop trigger if exists groups_trig2 on Schedule cascade;
+CREATE TRIGGER groups_trig2 after UPDATE or delete ON Schedule
+    FOR EACH ROW EXECUTE PROCEDURE groups_trig2();
 '''
 
 ###################### GET TABLE COLUMN NAMES

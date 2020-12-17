@@ -56,7 +56,8 @@ class Database:
 
     def _create_sup_fun(self):
         self._connect.execute(q.get_column_names)
-        self._connect.execute(q.trig)
+        self._connect.execute(q.trig1)
+        self._connect.execute(q.trig2)
         self._connect.execute(q.get_id)
         self._connect.execute("commit")
 
