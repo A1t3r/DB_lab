@@ -28,7 +28,7 @@ def init_insert_parser(file):  # парсеры написаны исходя и
         id = 0
         for item in text:
             if(file == 'data/Groups.txt'):
-                text[id] = [text[id], 9]
+                text[id] = [text[id], 0]
             else:
                 text[id] = [text[id]]
             id += 1
