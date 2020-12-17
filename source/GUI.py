@@ -14,7 +14,7 @@ def show_data(data=[], data_maxlength=[], inplace=True):
 
     length = len(data_maxlength)
     amount = len(data)
-	
+
     for row in data:
         format_string = ""
         for i in range(len(row)):
@@ -57,11 +57,11 @@ def create_database(window, entries, database):
             connect_database_def(window, database)
         window.destroy()
         return
-    # except exc.OperationalError as oe:
-    #    database[0] = None
-    #    mb.showerror(
-    #        "Error",
-    #        "{}".format(oe))
+        # except exc.OperationalError as oe:
+        #    database[0] = None
+        #    mb.showerror(
+        #        "Error",
+        #        "{}".format(oe))
         return
 
     window.destroy()
@@ -168,7 +168,7 @@ def connect_database_window(database):
                                                                                                     column=0)
     Button(window, text="Connect",
            command=lambda: connect_database(window, entries, database)).grid(row=num, column=1,
-                                                                            padx=v.cd_pad, pady=v.cd_pad)
+                                                                             padx=v.cd_pad, pady=v.cd_pad)
     return
 
 
@@ -266,7 +266,7 @@ def update_default():
 
     Button(window, text="Set",
            command=lambda: update_default_txt(window, entries, values)).grid(row=num, column=1,
-                                                                            padx=v.cd_pad, pady=v.cd_pad)
+                                                                             padx=v.cd_pad, pady=v.cd_pad)
 
 
 def pack_menu(database):
@@ -359,11 +359,11 @@ def show_tools(tool_frame, database, main_lbox):
     row += 1
 
     Label(tool_frame, text="Name").grid(row=row, column=0)
-    Label(tool_frame, text="Surname").grid(row=row+1, column=0)
+    Label(tool_frame, text="Surname").grid(row=row + 1, column=0)
     ds_entry_name = Entry(tool_frame)
     ds_entry_name.grid(row=row, column=1)
     ds_entry_surname = Entry(tool_frame)
-    ds_entry_surname.grid(row=row+1, column=1)
+    ds_entry_surname.grid(row=row + 1, column=1)
     row += 2
 
     Label(tool_frame, text="-" * (v.tl_button_width + 6)).grid(row=row, column=0)
@@ -450,7 +450,7 @@ def add2_table(combox, database):
 
     Button(window, text="Add",
            command=lambda: add2_database(window, entries, database, table_name)).grid(row=num, column=1,
-                                                                            padx=v.cd_pad, pady=v.cd_pad)
+                                                                                      padx=v.cd_pad, pady=v.cd_pad)
     return
 
 
@@ -570,7 +570,8 @@ def change_some_table(main_lbox, database):
 
     Button(window, text="Update chosen",
            command=lambda: update_in(table_name, database, ids, main_lbox, entries, window)).grid(row=num, column=1,
-                                                                                      padx=v.cd_pad, pady=v.cd_pad)
+                                                                                                  padx=v.cd_pad,
+                                                                                                  pady=v.cd_pad)
     ################
     return
 
@@ -605,10 +606,12 @@ def update_in(table_name, database, ids, main_lbox, entries, window):
 
             for id in ids:
                 database[0].update_table(table_name, cols, values,
-                                   ["id"], list(main_lbox.get(id).split()[0]))
+                                         ["id"], list(main_lbox.get(id).split()[0]))
             show_data(database[0].get_table(table_name), table_symbols_num[table_name])
             window.destroy()
     return
+
+
 ######################################################################
 
 # tools panel
