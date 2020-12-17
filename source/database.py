@@ -120,6 +120,7 @@ class Database:
             self._engine = engine
             self._connect = engine.connect()
             self._connect.execute("commit")
+            self._create_procedures()
             self.update_id()
             self._name = database_name
         else:
