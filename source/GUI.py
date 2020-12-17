@@ -103,8 +103,8 @@ def create_database_window(database):
         entries.append(ent)
         num += 1
 
-    Button(window, text="Create def",
-           command=lambda: create_database_def(window, database)).grid(row=num, column=0)
+    #Button(window, text="Create def",
+    #       command=lambda: create_database_def(window, database)).grid(row=num, column=0)
     Button(window, text="Create",
            command=lambda: create_database(window, entries, database)).grid(row=num, column=1,
                                                                             padx=v.cd_pad, pady=v.cd_pad)
@@ -164,8 +164,8 @@ def connect_database_window(database):
         entries.append(ent)
         num += 1
 
-    Button(window, text="Connect def", command=lambda: connect_database_def(window, database)).grid(row=num,
-                                                                                                    column=0)
+    #Button(window, text="Connect def", command=lambda: connect_database_def(window, database)).grid(row=num,
+    #                                                                                                column=0)
     Button(window, text="Connect",
            command=lambda: connect_database(window, entries, database)).grid(row=num, column=1,
                                                                              padx=v.cd_pad, pady=v.cd_pad)
@@ -442,9 +442,9 @@ def add2_table(combox, database):
         if col_name in {"id", "classes_number"}:
             continue
         Label(window, padx=v.cd_pad, pady=v.cd_pad, text=col_name,
-              width=v.cd_label_width).grid(row=i, column=0)
+              width=v.cd_label_width).grid(row=num, column=0)
         ent = Entry(window, width=v.cd_entry_width)
-        ent.grid(row=i, column=1, padx=v.cd_pad, pady=v.cd_pad)
+        ent.grid(row=num, column=1, padx=v.cd_pad, pady=v.cd_pad)
         entries.append(ent)
         num += 1
 
@@ -556,15 +556,15 @@ def change_some_table(main_lbox, database):
     entries = []
 
     number = len(v.table_column_names[table_name])
-    num = 1
+    num = 0
     for i in range(0, number):
         col_name = v.table_column_names[table_name][i]
         if col_name in {"id", "classes_number"}:
             continue
         Label(window, padx=v.cd_pad, pady=v.cd_pad, text=col_name,
-              width=v.cd_label_width).grid(row=i, column=0)
+              width=v.cd_label_width).grid(row=num, column=0)
         ent = Entry(window, width=v.cd_entry_width)
-        ent.grid(row=i, column=1, padx=v.cd_pad, pady=v.cd_pad)
+        ent.grid(row=num, column=1, padx=v.cd_pad, pady=v.cd_pad)
         entries.append(ent)
         num += 1
 
