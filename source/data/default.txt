@@ -1,4 +1,4 @@
-db_base_name#mydb
-db_name#mydb
+db_base_name#schedule
+db_name#schedule
 db_username#me
 db_password#123

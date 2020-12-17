@@ -69,9 +69,9 @@ def create_database(window, entries, database):
 
 
 def create_database_def(window, database):
-    database[0] = Database(v.db_name, v.db_username, v.db_password)
+    database[0] = Database(v.db_name(), v.db_username(), v.db_password())
     try:
-        database[0].create_database(v.db_name, v.db_username, v.db_password)
+        database[0].create_database(v.db_name(), v.db_username(), v.db_password())
     except exc.ProgrammingError as pe:
         database[0] = None
         answer = mb.askyesno(
@@ -132,9 +132,9 @@ def connect_database(window, entries, database):
 
 
 def connect_database_def(window, database):
-    database[0] = Database(v.db_name, v.db_username, v.db_password)
+    database[0] = Database(v.db_name(), v.db_username(), v.db_password())
     try:
-        database[0].connect(v.db_name, v.db_username, v.db_password)
+        database[0].connect(v.db_name(), v.db_username(), v.db_password())
     except exc.OperationalError as oe:
         database[0] = None
         mb.showerror(

@@ -24,7 +24,7 @@ class Database:
     }
 
     def __init__(self, dbname, username, password, host='localhost'):  # стартовая инициализация
-        engine = create_engine('postgresql+psycopg2://{}:{}@{}'.format(username, password, host))
+        engine = create_engine('postgresql+psycopg2://{}:{}@{}/{}'.format(username, password, host, dbname))
         self._parent_connect = engine.connect()
         self._metadata = MetaData()
         self._parent_connect.execute("commit")
@@ -116,7 +116,6 @@ class Database:
 
     def connect(self, database_name, username, password, host='localhost'):
         if self._name == None:
-
             engine = create_engine('postgresql+psycopg2://{}:{}@{}/{}'.format(username, password, host, database_name))
             self._engine = engine
             self._connect = engine.connect()
