@@ -523,7 +523,7 @@ def find_student(ds_entry_name, ds_entry_surname, database):
     surname = ds_entry_surname.get()
     result = database[0].search_by_FI(name, surname)
 
-    cols = [['weekday', 'daytime', 'type', 'audience', 'lecturer']]
+    cols = []
     for row in result:
         item = row[1:3] + row[4:]
         cols.append(item)
